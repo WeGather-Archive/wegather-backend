@@ -1,4 +1,4 @@
-package kr.wegather.wegather;
+package kr.wegather.wegather.repository;
 
 import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
@@ -26,15 +26,13 @@ class UserRepositoryTest {
     @Transactional
     @Rollback(value = false)
     public void testUser() throws Exception {
-        Random random = new Random();
-
         // given
+        Random random = new Random();
         SchoolDept schoolDept = new SchoolDept();
         schoolDept.setId(6478L);
         User user = new User();
         user.setSchoolDept(schoolDept);
         user.setName("엄호용");
-
         user.setEmail("mathpaul" + Integer.toString(random.nextInt()) + "@gmail.com");
         user.setNickname("mathpaul3");
         user.setPassword("password");
