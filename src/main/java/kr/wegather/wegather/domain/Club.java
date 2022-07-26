@@ -40,6 +40,8 @@ public class Club {
 
 
     // Columns
+    private String name;
+
     private String introduction;
 
     @Enumerated(EnumType.ORDINAL)
