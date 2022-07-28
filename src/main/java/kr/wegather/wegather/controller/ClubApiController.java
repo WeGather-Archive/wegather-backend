@@ -1,4 +1,4 @@
-package kr.wegather.wegather.api;
+package kr.wegather.wegather.controller;
 
 import kr.wegather.wegather.domain.Club;
 import kr.wegather.wegather.service.ClubService;
