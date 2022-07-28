@@ -27,11 +27,11 @@ public class ClubRepository {
 				.getResultList();
 	}
 
-	public Optional<Club> findByName(String name) {
+	public List<Club> findByName(String name) {
 		List<Club> result =  em.createQuery("SELECT c FROM Club c WHERE c.name = :name", Club.class)
 				.setParameter("name", name)
 				.getResultList();
 
-		return result.stream().findAny();
+		return result;
 	}
 }

@@ -11,6 +11,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -30,4 +33,32 @@ public class ClubServiceTest {
 
 		Assertions.assertEquals(club, clubRepository.findOne(savedId));
 	}
+
+	@Test
+	public void 클럽이름으로_조회() throws Exception {
+		List<Club> clubs = new ArrayList<>();
+
+		Club club = new Club();
+		club.setName("클럽1");
+		clubs.add(club);
+
+		Long savedId = clubService.createClub(club);
+		List<Club> findClub = clubService.findClubsByName("클럽1");
+
+		Assertions.assertEquals(clubs, findClub);
+	}
+
+	@Test
+	public void 클럽이름_수정() throws Exception {
+		Club club = new Club();
+		club.setName("클럽1");
+
+		Long savedId = clubService.createClub(club);
+
+		clubService.update(savedId, "클럽2");
+
+		Assertions.assertEquals(club.getName(), "클럽2");
+
+	}
+
 }

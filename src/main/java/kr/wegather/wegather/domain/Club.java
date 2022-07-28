@@ -40,6 +40,7 @@ public class Club {
 
 
     // Columns
+    @Column(name = "club_name")
     private String name;
 
     private String introduction;

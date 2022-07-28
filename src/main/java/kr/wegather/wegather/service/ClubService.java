@@ -34,7 +34,7 @@ public class ClubService {
 	}
 
 	/* club 이름으로 조회 */
-	public Optional<Club> findClubsByName(String clubName) {
+	public List<Club> findClubsByName(String clubName) {
 		return clubRepository.findByName(clubName);
 	}
 
