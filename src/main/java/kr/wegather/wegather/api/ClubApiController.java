@@ -1,5 +1,8 @@
 package kr.wegather.wegather.api;
 
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import kr.wegather.wegather.domain.Club;
 import kr.wegather.wegather.service.ClubService;
 import lombok.AllArgsConstructor;
@@ -14,9 +17,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ClubApiController {
 
+
+
 	private final ClubService clubService;
 
+
+
 	// club 생성
+	@ApiOperation(value = "club 생성")
 	@PostMapping("/api/v1/club")
 	public createClubResponse createClub(@RequestBody @Validated createClubRequest request){
 		Club club = new Club();
@@ -27,6 +35,7 @@ public class ClubApiController {
 	}
 
 	// club 이름 수정
+	@ApiOperation(value = "club 이름 수정")
 	@PutMapping("/api/v1/club/{id}")
 	public updateClubResponse updateClub(@PathVariable("id") Long id, @RequestBody @Validated updateClubRequest request) {
 		clubService.update(id, request.getName());
@@ -35,6 +44,7 @@ public class ClubApiController {
 	}
 
 	// club 조회
+	@ApiOperation(value = "club 전체 조회")
 	@GetMapping("/api/v1/club")
 	public List<Club> readClub() {
 		return clubService.findAllClubs();
