@@ -27,7 +27,7 @@ public class UserRepository {
                 .getResultList();
     }
 
-    public List<User> findByEmail(String email) {
+    public List<User> findOneByEmail(String email) {
         return em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
                 .setParameter("email", email)
                 .getResultList();

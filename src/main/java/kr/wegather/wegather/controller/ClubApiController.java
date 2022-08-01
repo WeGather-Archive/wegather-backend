@@ -1,4 +1,4 @@
-package kr.wegather.wegather.api;
+package kr.wegather.wegather.controller;
 
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

@@ -5,17 +5,20 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @DynamicInsert
 @DynamicUpdate
 @Getter @Setter
-public class User {
+public class User{
 
     // Primary Key
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,8 +41,11 @@ public class User {
 
 
     // Columns
-    @Column(nullable = false)
+    @Column
     private String nickname;
+
+    @Column
+    private String profile;
 
     @Column(nullable = false)
     private String name;
@@ -47,7 +53,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false, name = "password")
+    @Column(nullable = false)
     private String password;
 
     @Column
@@ -66,5 +72,36 @@ public class User {
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 
+    @Column(name = "is_verified")
+    private Boolean isVerified;
 
+//    @Override
+//    public Collection<? extends GrantedAuthority> getAuthorities() {
+//        return null;
+//    }
+//
+//    @Override
+//    public String getUsername() {
+//        return id.toString();
+//    }
+//
+//    @Override
+//    public boolean isAccountNonExpired() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isAccountNonLocked() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isCredentialsNonExpired() {
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean isEnabled() {
+//        return true;
+//    }
 }

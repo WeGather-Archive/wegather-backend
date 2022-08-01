@@ -38,3 +38,4 @@ out/
 
 ### Environmental Variables ###
 application.yml
+JwtTokenProvider.java
