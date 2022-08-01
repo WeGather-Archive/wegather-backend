@@ -4,8 +4,6 @@ import kr.wegather.wegather.domain.User;
 import kr.wegather.wegather.exception.UserException;
 import kr.wegather.wegather.exception.UserExceptionType;
 import kr.wegather.wegather.repository.UserRepository;
-import kr.wegather.wegather.security.JwtTokenProvider;
-import kr.wegather.wegather.security.SHA256;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +18,6 @@ import java.util.Map;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     /* 회원가입 */
     @Transactional
@@ -54,7 +51,8 @@ public class UserService {
         BCryptPasswordEncoder Bcrypt = new BCryptPasswordEncoder();
         if (!Bcrypt.matches(userParam.get("password"), user.getPassword()))
             throw new UserException(UserExceptionType.WRONG_INPUT);
-        return jwtTokenProvider.createToken(user.getId(), user.getNickname(), user.getUsername(), user.getProfile());
+//        return jwtTokenProvider.createToken(user.getId(), user.getNickname(), user.getUsername(), user.getProfile());
+        return "Created";
     }
 
     public User find(Long id) {

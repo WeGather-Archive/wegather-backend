@@ -54,5 +54,5 @@ public class Selection {
     private String onlineLink;
 
     @Column(name = "is_online")
-    private Integer isOnline;
+    private Boolean isOnline;
 }

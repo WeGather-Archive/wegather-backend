@@ -1,6 +1,5 @@
 package kr.wegather.wegather.domain;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kr.wegather.wegather.StringListConverter;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @DynamicInsert
@@ -39,8 +37,11 @@ public class Application {
     // Columns
     @Convert(converter = StringListConverter.class)
     @Column(columnDefinition = "json")
-    private ArrayList<String> question;
+    private ArrayList<String> answer;
 
     @Column(name = "created_time")
     private Timestamp created;
+
+    @Column(name = "last_modified")
+    private Timestamp lastModified;
 }

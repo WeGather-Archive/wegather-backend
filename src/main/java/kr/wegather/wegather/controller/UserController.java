@@ -2,7 +2,7 @@ package kr.wegather.wegather.controller;
 
 import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
-import kr.wegather.wegather.security.JwtTokenProvider;
+//import kr.wegather.wegather.security.JwtTokenProvider;
 import kr.wegather.wegather.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,6 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
     public ResponseEntity<User> signUp(@RequestBody SignUpRequest signUpRequest) {
@@ -46,16 +45,16 @@ public class UserController {
         if (user.get("email").isBlank() || user.get("password").isBlank())
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
-        String Token = userService.login(user);
-        Cookie cookie = new Cookie(
-                "token",
-                Token
-        );
-
-        cookie.setPath("/");
-        cookie.setMaxAge(30 * 60 * 1000);
-
-        res.addCookie(cookie);
+//        String Token = userService.login(user);
+//        Cookie cookie = new Cookie(
+//                "token",
+//                Token
+//        );
+//
+//        cookie.setPath("/");
+//        cookie.setMaxAge(30 * 60 * 1000);
+//
+//        res.addCookie(cookie);
         return new ResponseEntity(HttpStatus.OK);
     }
 
