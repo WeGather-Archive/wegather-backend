@@ -6,15 +6,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -66,9 +61,6 @@ public class User{
 
     @Column
     private String phone;
-
-    @Column
-    private String imgUrl;
 
     @Column(name = "created_time")
     private Timestamp createdTime;
