@@ -1,5 +1,6 @@
 package kr.wegather.wegather.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.wegather.wegather.StringListConverter;
 import kr.wegather.wegather.domain.enums.QuestionnaireStatus;
 import lombok.Getter;
@@ -25,6 +26,7 @@ public class Questionnaire {
 
 
     // Foreign Keys - OneToMany
+    @JsonIgnore
     @OneToMany(mappedBy = "questionnaire")
     private List<Application> applications = new ArrayList<>();
 

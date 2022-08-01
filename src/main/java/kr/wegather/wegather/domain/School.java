@@ -1,5 +1,6 @@
 package kr.wegather.wegather.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,9 +19,11 @@ public class School {
 
 
     // Foreign Keys - OneToMany
+    @JsonIgnore
     @OneToMany(mappedBy = "school")
     private List<ClubSchool> clubSchools = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "school")
     private List<SchoolDept> schoolDepts = new ArrayList<>();
 
