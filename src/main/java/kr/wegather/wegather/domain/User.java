@@ -53,6 +53,9 @@ public class User {
     @Column
     private String phone;
 
+    @Column
+    private String imgUrl;
+
     @Column(name = "created_time")
     private Timestamp createdTime;
 
