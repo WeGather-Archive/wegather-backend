@@ -59,8 +59,9 @@ public class User{
     @Column(nullable = false)
     private String password;
 
-    @Column
     private String phone;
+
+    private String user_avatar;
 
     @Column(name = "created_time")
     private Timestamp createdTime;

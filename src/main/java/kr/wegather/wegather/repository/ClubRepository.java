@@ -25,7 +25,7 @@ public class ClubRepository {
 	}
 
 	public List<Club> findAll() {
-		return em.createQuery("SELECT u FROM Club u", Club.class)
+		return em.createQuery("SELECT c FROM Club c", Club.class)
 				.getResultList();
 	}
 

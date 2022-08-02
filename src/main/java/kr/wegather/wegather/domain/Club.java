@@ -48,6 +48,8 @@ public class Club {
     @Column(name = "club_name")
     private String name;
 
+    private String club_avatar;
+
     private String introduction;
 
     @Enumerated(EnumType.ORDINAL)
