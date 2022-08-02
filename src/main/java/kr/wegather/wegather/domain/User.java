@@ -1,17 +1,15 @@
 package kr.wegather.wegather.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.wegather.wegather.domain.enums.AuthLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -27,9 +25,11 @@ public class User{
 
 
     // Foreign Keys - OneToMany
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Applicant> applicants = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<ClubMember> clubMembers = new ArrayList<>();
 
@@ -43,6 +43,9 @@ public class User{
     // Columns
     @Column
     private String nickname;
+
+    @Column(name = "user_avatar")
+    private String avatar;
 
     @Column
     private String profile;
@@ -72,34 +75,4 @@ public class User{
 
     @Column(name = "is_verified")
     private Boolean isVerified;
-
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return null;
-//    }
-//
-//    @Override
-//    public String getUsername() {
-//        return id.toString();
-//    }
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return true;
-//    }
 }

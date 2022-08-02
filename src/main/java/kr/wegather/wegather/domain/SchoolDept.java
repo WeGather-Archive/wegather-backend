@@ -1,7 +1,10 @@
 package kr.wegather.wegather.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ public class SchoolDept {
 
 
     // Foreign Keys - OneToMany
+    @JsonIgnore
     @OneToMany(mappedBy = "schoolDept")
     private List<User> users = new ArrayList<>();
 
@@ -31,5 +35,4 @@ public class SchoolDept {
     // Columns
     private String college;
     private String dept;
-
 }

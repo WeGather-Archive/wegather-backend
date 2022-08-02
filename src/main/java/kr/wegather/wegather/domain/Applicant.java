@@ -1,5 +1,6 @@
 package kr.wegather.wegather.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.wegather.wegather.domain.enums.ApplicantStatus;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ public class Applicant {
 
 
     // Foreign Keys - OneToMany
+    @JsonIgnore
     @OneToMany(mappedBy = "applicant")
     private List<Application> applications = new ArrayList<>();
 

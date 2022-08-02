@@ -35,7 +35,7 @@ public class ApplicantController {
         // Form Data
         try {
 //            recruitment = recruitmentService.findOne(recruitmentId);
-            user = userService.find(userId);
+            user = userService.findOne(userId);
 
 //            selection = recruitment.getSelections().get(0);
         } catch (Exception e) {

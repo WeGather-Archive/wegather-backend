@@ -2,7 +2,6 @@ package kr.wegather.wegather.controller;
 
 import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
-//import kr.wegather.wegather.security.JwtTokenProvider;
 import kr.wegather.wegather.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-
 
 @Controller
 @RequiredArgsConstructor
@@ -24,74 +21,140 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<String> signUp(@RequestBody signUpRequest signUpRequest) {
         // Set User Info
         SchoolDept schoolDept = new SchoolDept();
         schoolDept.setId(signUpRequest.schoolDept);
         User newUser = new User();
         newUser.setSchoolDept(schoolDept);
         newUser.setName(signUpRequest.name);
+        if (signUpRequest.nickName != null)
+            newUser.setNickname(signUpRequest.nickName);
+        else {
+            newUser.setNickname(signUpRequest.name);
+        }
         newUser.setEmail(signUpRequest.email);
         newUser.setPassword (signUpRequest.password);
 
         userService.register(newUser);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser.toString());
     }
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody Map<String, String> user, HttpServletResponse res) {
-        // Check if req is correct
-        if (user.get("email").isBlank() || user.get("password").isBlank())
+    public ResponseEntity login(@RequestBody loginRequest request, HttpServletResponse res) {
+        // Check req
+        String email = request.email, password = request.password;
+        if (email == null || password == null)
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
 
-//        String Token = userService.login(user);
-//        Cookie cookie = new Cookie(
-//                "token",
-//                Token
-//        );
-//
-//        cookie.setPath("/");
-//        cookie.setMaxAge(30 * 60 * 1000);
-//
-//        res.addCookie(cookie);
+        // 맞다면 Token 발급
+        String token;
+        try {
+            token = userService.login(email, password);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+        Cookie cookie = new Cookie(
+                "token",
+                token
+        );
+
+        cookie.setMaxAge(30 * 60 * 1000);
+
+        res.addCookie(cookie);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> searchUser(@PathVariable("id") Long id) {
-        User user = userService.find(id);
+        User user = new User();
+        try {
+            user = userService.findOne(id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody User user) {
-        user.setId(id);
-        userService.update(user);
+    public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody updateUserRequest request) {
+        String nickname = request.nickname, avatar = request.avatar, profile = request.profile, phone = request.phone;
+        try {
+            userService.updateUser(id, nickname, avatar, profile, phone);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity updatePassword(@PathVariable("id") Long id, @RequestBody String password) {
-        userService.changePassword(id, password);
+    @PatchMapping("/pwd/{id}")
+    public ResponseEntity updatePassword(@PathVariable("id") Long id, @RequestBody updatePasswordRequest request) {
+        String password = request.password;
+        try {
+            userService.changePassword(id, password);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
 
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PatchMapping("/email/{id}")
+    public ResponseEntity updateEmail(@PathVariable("id") Long id, @RequestBody updateEmailRequst request) {
+        String email = request.email;
+        try {
+            userService.changeEmail(id, email);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteUser(@PathVariable("id") Long id) {
-        userService.delete(id);
+        try {
+            userService.delete(id);
+        } catch (Exception e) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
 
-        return new ResponseEntity(HttpStatus.ACCEPTED);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Data
-    static class SignUpRequest {
-        private Long schoolDept;
-        private String name;
+    static class loginRequest {
         private String email;
         private String password;
+    }
+
+    @Data
+    static class signUpRequest {
+        private Long schoolDept;
+        private String name;
+        private String nickName;
+        private String email;
+        private String password;
+    }
+
+    @Data
+    static class updateUserRequest {
+        private String nickname;
+        private String avatar;
+        private String profile;
+        private String phone;
+    }
+
+    @Data
+    static class updatePasswordRequest {
+        private String password;
+    }
+
+    @Data
+    static class updateEmailRequst {
+        private String email;
     }
 }

@@ -19,17 +19,23 @@ public class UserRepository {
     }
 
     public User findOne(Long id) {
-        return em.find(User.class, id);
+        User user = em.find(User.class, id);
+        if (user.getIsDeleted())
+            return null;
+        else
+            return user;
+    }
+
+    public User findOneByEmail(String email) {
+        return em.createQuery("SELECT u FROM User u WHERE u.email = :email AND u.isDeleted = :isDeleted", User.class)
+                .setParameter("email", email)
+                .setParameter("isDeleted", false)
+                .getSingleResult();
     }
 
     public List<User> findAll() {
-        return em.createQuery("SELECT u FROM User u", User.class)
-                .getResultList();
-    }
-
-    public List<User> findOneByEmail(String email) {
-        return em.createQuery("SELECT u FROM User u WHERE u.email = :email", User.class)
-                .setParameter("email", email)
+        return em.createQuery("SELECT u FROM User u WHERE u.isDeleted = :isDeleted", User.class)
+                .setParameter("isDeleted", false)
                 .getResultList();
     }
 }

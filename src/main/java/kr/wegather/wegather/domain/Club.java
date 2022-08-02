@@ -1,5 +1,6 @@
 package kr.wegather.wegather.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.wegather.wegather.domain.enums.ClubType;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,15 +24,19 @@ public class Club {
 
 
     // Foreign Keys - OneToMany
+    @JsonIgnore
     @OneToMany(mappedBy = "club")
     private List<ClubMember> clubMembers = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "club")
     private List<ClubRole> clubRoles = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "club")
     private List<ClubSchool> clubSchools = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "club")
     private List<Recruitment> recruitments = new ArrayList<>();
 

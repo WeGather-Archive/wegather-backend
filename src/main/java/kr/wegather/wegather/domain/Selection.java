@@ -1,5 +1,6 @@
 package kr.wegather.wegather.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
@@ -23,9 +24,11 @@ public class Selection {
 
 
     // Foreign Keys - OneToMany
+    @JsonIgnore
     @OneToMany(mappedBy = "selection")
     private List<Applicant> applicants = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "selection")
     private List<Questionnaire> questionnaires = new ArrayList<>();
 

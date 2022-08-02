@@ -19,6 +19,8 @@ repositories {
 }
 
 dependencies {
+	implementation group: 'org.json', name: 'json', version: '20090211'
+
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
 	implementation 'org.springframework.boot:spring-boot-starter-security:2.7.0'
 	implementation 'org.springframework.security:spring-security-test'
