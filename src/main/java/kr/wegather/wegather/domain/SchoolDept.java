@@ -27,7 +27,7 @@ public class SchoolDept {
 
 
     // Foreign Keys - ManyToOne
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_idx")
     private School school;
 

@@ -1,10 +1,12 @@
 package kr.wegather.wegather.repository;
 
 import kr.wegather.wegather.domain.Club;
+import kr.wegather.wegather.domain.ClubMember;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

@@ -25,11 +25,11 @@ public class Application {
 
 
     // Foreign Keys - ManyToOne
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "applicant_idx")
     private Applicant applicant;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "questionnaire_idx")
     private Questionnaire questionnaire;
 

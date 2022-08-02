@@ -19,11 +19,11 @@ public class ClubMemberRole {
 
 
     // Foreign Keys - ManyToOne
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_member_idx")
     private ClubMember clubMember;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_role_idx")
     private ClubRole clubRole;
 

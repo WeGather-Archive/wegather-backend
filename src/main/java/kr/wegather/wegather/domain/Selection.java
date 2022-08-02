@@ -34,7 +34,7 @@ public class Selection {
 
 
     // Foreign Keys - ManyToOne
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recruitment_idx")
     private Recruitment recruitment;
 

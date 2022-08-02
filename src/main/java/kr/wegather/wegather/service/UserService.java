@@ -19,7 +19,6 @@ public class UserService {
     private final UserRepository userRepository;
 
     /* 회원가입 */
-    @Transactional
     public Long register(User user) {
         String email = user.getEmail();
         validateDuplicateUser(email); // 중복 회원 검증
