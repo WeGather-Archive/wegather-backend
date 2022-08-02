@@ -15,6 +15,14 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 @Getter @Setter
+@Table(
+        uniqueConstraints={
+                @UniqueConstraint(
+                        name="user_idx_club_idx",
+                        columnNames={"user_idx", "club_idx"}
+                )
+        }
+)
 public class ClubMember {
 
     // Primary Key
@@ -30,11 +38,11 @@ public class ClubMember {
 
 
     // Foreign Keys - ManyToOne
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_idx")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_idx")
     private Club club;
 

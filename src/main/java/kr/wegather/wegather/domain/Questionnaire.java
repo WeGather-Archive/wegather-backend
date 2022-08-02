@@ -32,7 +32,7 @@ public class Questionnaire {
 
 
     // Foreign Keys - ManyToOne
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "selection_idx")
     private Selection selection;
 

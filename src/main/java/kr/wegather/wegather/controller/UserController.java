@@ -1,5 +1,6 @@
 package kr.wegather.wegather.controller;
 
+import io.swagger.annotations.ApiModelProperty;
 import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
 import kr.wegather.wegather.service.UserService;
@@ -21,7 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody signUpRequest signUpRequest) {
+    public ResponseEntity<User> signUp(@RequestBody signUpRequest signUpRequest) {
         // Set User Info
         SchoolDept schoolDept = new SchoolDept();
         schoolDept.setId(signUpRequest.schoolDept);
@@ -38,7 +39,7 @@ public class UserController {
 
         userService.register(newUser);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser.toString());
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @PostMapping("/login")
@@ -127,7 +128,9 @@ public class UserController {
 
     @Data
     static class loginRequest {
+        @ApiModelProperty(name = "email", example = "test@test.com")
         private String email;
+        @ApiModelProperty(name = "password", example = "qwe123!@#")
         private String password;
     }
 

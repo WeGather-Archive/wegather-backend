@@ -35,7 +35,7 @@ public class User{
 
 
     // Foreign Keys - ManyToOne
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "school_dept_idx")
     private SchoolDept schoolDept;
 
