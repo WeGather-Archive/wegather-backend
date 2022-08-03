@@ -3,6 +3,9 @@ package kr.wegather.wegather.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -41,4 +44,18 @@ public class School {
 
     @Column(name = "school_gubun")
     private String gubun;
+
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("name", name);
+            json.put("location", location);
+            json.put("branch", branch);
+            json.put("gubun", gubun);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

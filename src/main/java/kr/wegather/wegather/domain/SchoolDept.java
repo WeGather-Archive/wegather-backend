@@ -33,6 +33,22 @@ public class SchoolDept {
 
 
     // Columns
+    @Column
     private String college;
+
+    @Column
     private String dept;
+
+    public JSONObject toJSON() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("school", school);
+            json.put("college", college);
+            json.put("dept", dept);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

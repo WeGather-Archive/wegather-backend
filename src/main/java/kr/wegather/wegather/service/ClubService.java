@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -24,25 +23,38 @@ public class ClubService {
 		return club.getId();
 	}
 
-	/* club 목록 전체 조회 */
-	public List<Club> findAllClubs() {
-		return clubRepository.findAll();
-	}
 
+	/* club 조회 */
+	// 단건 조회 - Id
 	public Club findOne(Long id) {
 		return clubRepository.findOne(id);
 	}
 
-	/* club 이름으로 조회 */
-	public List<Club> findClubsByName(String clubName) {
+	// 복수 조회 - 필터
+	public List<Club> findAll() {
+		return clubRepository.findAll();
+	}
+
+	public List<Club> findByName(String clubName) {
 		return clubRepository.findByName(clubName);
 	}
 
-	/* club 이름 수정 */
+
+	/* club 수정 */
 	public void update(Long id, String newClubName) {
 		Club club = clubRepository.findOne(id);
 		club.setName(newClubName);
 	}
+
+
+	/* club 삭제 */
+
+
+
+
+	/* club 이름으로 조회 */
+
+
 	
 
 

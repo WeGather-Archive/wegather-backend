@@ -32,10 +32,4 @@ public class UserRepository {
                 .setParameter("isDeleted", false)
                 .getSingleResult();
     }
-
-    public List<User> findAll() {
-        return em.createQuery("SELECT u FROM User u WHERE u.isDeleted = :isDeleted", User.class)
-                .setParameter("isDeleted", false)
-                .getResultList();
-    }
 }

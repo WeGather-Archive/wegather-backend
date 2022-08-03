@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -43,7 +42,7 @@ public class ClubServiceTest {
 		clubs.add(club);
 
 		Long savedId = clubService.createClub(club);
-		List<Club> findClub = clubService.findClubsByName("클럽1");
+		List<Club> findClub = clubService.findByName("클럽1");
 
 		Assertions.assertEquals(clubs, findClub);
 	}
