@@ -2,8 +2,8 @@ package kr.wegather.wegather.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 
@@ -30,4 +30,17 @@ public class ClubSchool {
 
 
     // Columns
+
+
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("club", club);
+            json.put("school", school);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

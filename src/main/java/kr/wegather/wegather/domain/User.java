@@ -1,11 +1,14 @@
 package kr.wegather.wegather.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 import kr.wegather.wegather.domain.enums.AuthLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -33,6 +36,9 @@ public class User{
     @OneToMany(mappedBy = "user")
     private List<ClubMember> clubMembers = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "admin")
+    private List<Club> clubs = new ArrayList<>();
 
     // Foreign Keys - ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
@@ -51,12 +57,15 @@ public class User{
     private String profile;
 
     @Column(nullable = false)
+    @ApiModelProperty(example = "홍길동")
     private String name;
 
     @Column(nullable = false, unique = true)
+    @ApiModelProperty(example = "test@test.com")
     private String email;
 
     @Column(nullable = false)
+    @ApiModelProperty(example = "password")
     private String password;
 
     @Column
@@ -74,4 +83,14 @@ public class User{
 
     @Column(name = "is_verified")
     private Boolean isVerified;
+
+    public JSONObject toJSONObjectForClub() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("name", name);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

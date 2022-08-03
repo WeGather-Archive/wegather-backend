@@ -2,13 +2,16 @@ package kr.wegather.wegather.controller;
 
 import io.swagger.annotations.ApiOperation;
 import kr.wegather.wegather.domain.*;
-import kr.wegather.wegather.service.ClubService;
-import lombok.AllArgsConstructor;
+import kr.wegather.wegather.domain.enums.ClubRoleAuthLevel;
+import kr.wegather.wegather.domain.enums.QuestionnaireStatus;
+import kr.wegather.wegather.service.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,7 +21,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/club")
 public class ClubController {
+	private final UserService userService;
 	private final ClubService clubService;
+	private final ClubRoleService clubRoleService;
+	private final ClubMemberService clubMemberService;
+	private final ClubSchoolService clubSchoolService;
+	private final ApplicantService applicantService;
+	private final QuestionnaireService questionnaireService;
 
 	@ApiOperation(value = "동아리 전체 목록 조회")
 	@GetMapping("/")
@@ -31,91 +40,249 @@ public class ClubController {
 
 	@ApiOperation(value = "동아리 등록")
 	@PostMapping("/")
-	public ResponseEntity<Long> createClub(@RequestBody createClubRequest request){
-		Club club = new Club();
-		club.setName(request.getName());
+	public ResponseEntity<String> createClub(@RequestBody createClubRequest request){
+		// 유저 데이터
+		Long userId = 11L; // Token에서 가져오기
+		User user = userService.findOne(userId);
 
-		Long id = clubService.createClub(club);
-		return ResponseEntity.status(HttpStatus.CREATED).body(id);
+		// 앞으로 쓸 더미 데이터 생성
+		Club dummyClub = new Club();
+		ClubMember dummyClubMember = new ClubMember();
+		ClubRole dummyClubRole = new ClubRole();
+
+		// 동아리 및 동아리 관리자(Admin) 지정
+		Club club = new Club();
+		club.setAdmin(user);
+		club.setName(request.name);
+		club.setIntroduction(request.introduction);
+		club.setAvatar(request.avatar);
+		club.setPhone(request.phone);
+		Long clubId = clubService.createClub(club);
+		dummyClub.setId(clubId);
+
+		// 동아리 역할 생성
+		ClubRole clubRole = new ClubRole();
+		clubRole.setClub(dummyClub);
+		clubRole.setRole("동아리장");
+		clubRole.setAuthLevel(ClubRoleAuthLevel.OPERATOR);
+		Long clubRoleId = clubRoleService.createClubRole(clubRole);
+		dummyClubRole.setId(clubRoleId);
+
+		clubRole = new ClubRole();
+		clubRole.setClub(dummyClub);
+		clubRole.setRole("동아리원");
+		clubRole.setAuthLevel(ClubRoleAuthLevel.MEMBER);
+		clubRoleService.createClubRole(clubRole);
+
+		// 동아리장 생성 및 역할 부여
+		ClubMember clubMember = new ClubMember();
+		clubMember.setClub(dummyClub);
+		clubMember.setRole(dummyClubRole);
+		clubMember.setUser(user);
+		Long clubMemberId = clubMemberService.createClubMember(clubMember);
+		dummyClubMember.setId(clubMemberId);
+
+		// 동아리의 소속 학교 = 동아리장의 학교;
+		ClubSchool clubSchool = new ClubSchool();
+		clubSchool.setClub(dummyClub);
+		clubSchool.setSchool(user.getSchoolDept().getSchool());
+		clubSchoolService.createClubSchool(clubSchool);
+
+
+		// 응답 객체 생성
+		JSONObject res = new JSONObject();
+		try {
+			res.put("club_id", clubId);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(res.toString());
+	}
+
+	@ApiOperation(value = "동아리 프로필 이미지 업로드")
+	@PostMapping("/image")
+	public ResponseEntity createImage() {
+//		현재 해당 사항 없음
+//		S3 올린 후 구현
+		return new ResponseEntity(HttpStatus.CREATED);
 	}
 
 	@ApiOperation(value = "동아리 상세 정보 조회")
 	@GetMapping("/{club_id}")
-	public ResponseEntity<Club> searchClub() {
-		Club club = new Club();
+	public ResponseEntity<String> searchClub(@PathVariable("club_id") Long id) {
+		// Club 객체 조회
+		Club club;
+		try {
+			club = clubService.findOneWithUser(id);
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		JSONObject res = club.toJSONObject();
 
-		return ResponseEntity.status(HttpStatus.OK).body(club);
+		// ClubSchool 객체 조회
+		List<ClubSchool> clubSchools = clubSchoolService.findByClub(id);
+		JSONArray clubSchoolsJSON = new JSONArray();
+		for (ClubSchool clubSchool: clubSchools) {
+			clubSchoolsJSON.put(clubSchool.getSchool().toJSONObject());
+		}
+
+		try {
+			res.put("school", clubSchoolsJSON);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		// 응답 객체 생성
+		return ResponseEntity.status(HttpStatus.OK).body(res.toString());
 	}
 
 	@ApiOperation(value = "동아리 상세 정보 수정")
 	@PutMapping("/{club_id}")
-	public ResponseEntity<Long> updateClub(@PathVariable("id") Long id, @RequestBody @Validated updateClubRequest request) {
-		clubService.update(id, request.getName());
-		Club findClub = clubService.findOne(id);
-		return ResponseEntity.status(HttpStatus.OK).body(findClub.getId());
+	public ResponseEntity updateClub(@PathVariable("club_id") Long id, @RequestBody updateClubRequest request) {
+		// 수정할 fields
+		String phone = request.phone, name = request.name, introduction = request.introduction, avatar = request.avatar;
+		clubService.updateClub(id, phone, name, introduction, avatar);
+		return new ResponseEntity(HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "구성원 전체 목록 조회")
 	@GetMapping("/member")
-	public ResponseEntity<List<ClubMember>> searchClubMembers() {
-		List<ClubMember> clubMembers = new ArrayList<>();
+	public ResponseEntity<String> searchClubMembers(@RequestParam Long id) {
+		// 구성원 조회
+		List<ClubMember> clubMembers = clubMemberService.findByClub(id);
 
-		return ResponseEntity.status(HttpStatus.OK).body(clubMembers);
+		// 응답 객체 생성
+		JSONObject res = new JSONObject();
+		JSONArray clubMembersArray = new JSONArray();
+		for (ClubMember clubMember: clubMembers) {
+			clubMembersArray.put(clubMember.toJSONObject());
+		}
+		try {
+			res.put("club_members", clubMembersArray);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(res.toString());
 	}
 
 	@ApiOperation(value = "동아리 역할 목록 조회")
 	@GetMapping("/role")
-	public ResponseEntity<List<ClubRole>> searchClubRoles() {
-		List<ClubRole> clubRoles = new ArrayList<>();
+	public ResponseEntity<String> searchClubRoles(@RequestParam Long id) {
+		// 동아리 역할 조회
+		List<ClubRole> clubRoles = clubRoleService.findByClub(id);
 
-		return ResponseEntity.status(HttpStatus.OK).body(clubRoles);
+		// 응답 객체 생성
+		JSONArray clubRoleArray = new JSONArray();
+		for (ClubRole clubRole: clubRoles) {
+			clubRoleArray.put(clubRole.toJSONObject());
+		}
+		JSONObject res = new JSONObject();
+		try {
+			res.put("club_roles", clubRoleArray);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(res.toString());
 	}
 
 	@ApiOperation(value = "동아리 역할 생성")
-	@PostMapping("/role")
-	public ResponseEntity createClubRole() {
+	@PostMapping("/role/{club_id}")
+	public ResponseEntity createClubRole(@PathVariable("club_id") Long id, @RequestBody createClubRoleRequest request) {
+		// 동아리 역할 생성
+		Club club = new Club();
+		club.setId(id);
+		String role = request.role;
+		ClubRoleAuthLevel authLevel = request.authLevel;
+
+		ClubRole clubRole = new ClubRole();
+		clubRole.setClub(club);
+		clubRole.setRole(role);
+		clubRole.setAuthLevel(authLevel);
+
+		clubRoleService.createClubRole(clubRole);
 
 		return new ResponseEntity(HttpStatus.CREATED);
-	}
-
-	@ApiOperation(value = "동아리 지원자 목록 조회")
-	@GetMapping("/applicant")
-	public ResponseEntity<List<Applicant>> searchApplicants() {
-		List<Applicant> applicants = new ArrayList<>();
-
-
-		return ResponseEntity.status(HttpStatus.OK).body(applicants);
 	}
 
 	@ApiOperation(value = "이메일 발송")
 	@PostMapping("/email")
 	public ResponseEntity createEmail() {
-		// 현재 해당 사항 없음
+//		현재 해당 사항 없음
+//		wegather 도메인으로 email 보내는 법 찾아본 후 구현
 		return new ResponseEntity(HttpStatus.CREATED);
 	}
 
 	@ApiOperation(value = "모집 폼 목록 조회")
 	@GetMapping("/form")
-	public ResponseEntity<List<Questionnaire>> searchQuestionnaires() {
-		List<Questionnaire> questionnaires = new ArrayList<>();
-		return ResponseEntity.status(HttpStatus.OK).body(questionnaires);
+	public ResponseEntity<String> searchQuestionnaires(@RequestParam Long id) {
+		List<Questionnaire> questionnaires = questionnaireService.findByClub(id);
+		JSONArray questionnaireArray = new JSONArray();
+		for (Questionnaire questionnaire: questionnaires) {
+			questionnaireArray.put(questionnaire.toJSONObject());
+		}
+
+		JSONObject res = new JSONObject();
+		try {
+			res.put("questionnaires", questionnaireArray);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(res.toString());
 	}
 
 	@ApiOperation(value = "모집 폼 생성")
 	@PostMapping("/form")
-	public ResponseEntity createQuestionnaire() {
+	public ResponseEntity<String> createQuestionnaire(@RequestBody createQuestionnaireRequest request) {
+		// 모집 폼 생성
+		Long selectionId = request.selectionId;
+		Selection selection = new Selection();
+		selection.setId(selectionId);
+		String title = request.title;
+		List<String> array = new ArrayList<>();
 
+		Questionnaire questionnaire = new Questionnaire();
+		questionnaire.setSelection(selection);
+		questionnaire.setTitle(title);
+		questionnaire.setQuestion(array);
+		questionnaire.setStatus(QuestionnaireStatus.CREATED);
+
+		Long formId;
+		formId = questionnaireService.createQuestionnaire(questionnaire);
+
+		JSONObject res = new JSONObject();
+		try {
+			res.put("form_id", formId);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
 		return new ResponseEntity(HttpStatus.CREATED);
 	}
 
 	@Data
-	static class updateClubRequest {
+	static class createClubRequest {
+
 		private String name;
+		private String introduction;
+		private String avatar;
+		private String phone;
 	}
 
 	@Data
-	static class createClubRequest {
+	static class updateClubRequest {
+		private String phone;
 		private String name;
+		private String introduction;
+		private String avatar;
 	}
 
+	@Data
+	static class createClubRoleRequest {
+		private String role;
+		private ClubRoleAuthLevel authLevel;
+	}
+
+	@Data
+	static class createQuestionnaireRequest {
+		private Long selectionId;
+		private String title;
+	}
 }

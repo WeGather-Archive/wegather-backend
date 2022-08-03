@@ -36,11 +36,6 @@ public class ApplicantService {
         return applicantRepository.findByRecruitment(recruitmentId);
     }
 
-    // 복수 조회 - Selection
-    public List<Applicant> findBySelection(Long selectionId) {
-        return applicantRepository.findBySelection(selectionId);
-    }
-
     /* Applicant 수정 */
     public void updateApplicant(Long id, Long selectionId, ApplicantStatus status) {
         Applicant applicant = applicantRepository.findOne(id);

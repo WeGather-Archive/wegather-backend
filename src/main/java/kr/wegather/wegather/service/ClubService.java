@@ -30,6 +30,11 @@ public class ClubService {
 		return clubRepository.findOne(id);
 	}
 
+	// 단건 조회 - Id
+	public Club findOneWithUser(Long id) {
+		return clubRepository.findOneWithUser(id);
+	}
+
 	// 복수 조회 - 필터
 	public List<Club> findAll() {
 		return clubRepository.findAll();
@@ -41,22 +46,14 @@ public class ClubService {
 
 
 	/* club 수정 */
-	public void update(Long id, String newClubName) {
+	public void updateClub(Long id, String phone, String name, String introduction, String avatar) {
 		Club club = clubRepository.findOne(id);
-		club.setName(newClubName);
+		club.setPhone(phone);
+		club.setName(name);
+		club.setIntroduction(introduction);
+		club.setAvatar(avatar);
 	}
 
 
 	/* club 삭제 */
-
-
-
-
-	/* club 이름으로 조회 */
-
-
-	
-
-
-
 }

@@ -24,6 +24,12 @@ public class ClubRepository {
 		return em.find(Club.class, id);
 	}
 
+	public Club findOneWithUser(Long id) {
+		return em.createQuery("SELECT c FROM Club c JOIN FETCH c.admin WHERE c.id = :id", Club.class)
+				.setParameter("id", id)
+				.getSingleResult();
+	}
+
 	public List<Club> findAll() {
 		return em.createQuery("SELECT c FROM Club c", Club.class)
 				.getResultList();

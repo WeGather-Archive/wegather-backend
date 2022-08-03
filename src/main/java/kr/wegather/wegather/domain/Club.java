@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -36,19 +38,23 @@ public class Club {
     @OneToMany(mappedBy = "club")
     private List<ClubSchool> clubSchools = new ArrayList<>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "club")
-    private List<Recruitment> recruitments = new ArrayList<>();
-
 
     // Foreign Keys - ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_admin_idx")
+    private User admin;
 
+
+    // Column
+    @Column(name = "club_phone")
+    private String phone;
 
     // Columns
     @Column(name = "club_name")
     private String name;
 
-    private String club_avatar;
+    @Column(name = "club_avatar")
+    private String avatar;
 
     private String introduction;
 
@@ -57,4 +63,20 @@ public class Club {
 
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("admin", admin.toJSONObjectForClub());
+            json.put("phone", phone);
+            json.put("name", name);
+            json.put("avatar", avatar);
+            json.put("introduction", introduction);
+            json.put("type", type);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

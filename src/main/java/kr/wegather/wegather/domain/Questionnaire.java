@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -17,6 +19,14 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 @Getter @Setter
+@Table(
+        uniqueConstraints={
+                @UniqueConstraint(
+                        name="selection_idx",
+                        columnNames={"selection_idx"}
+                )
+        }
+)
 public class Questionnaire {
 
     // Primary Key
@@ -52,4 +62,20 @@ public class Questionnaire {
 
     @Enumerated(EnumType.ORDINAL)
     private QuestionnaireStatus status; // CREATED, STARTED, CLOSED
+
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("selection", selection.getId());
+            json.put("title", title);
+            json.put("question", question);
+            json.put("created", created);
+            json.put("last_modified", lastModified);
+            json.put("status", status);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

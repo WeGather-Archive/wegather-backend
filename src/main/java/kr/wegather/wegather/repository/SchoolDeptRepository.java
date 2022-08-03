@@ -12,9 +12,9 @@ import java.util.List;
 public class SchoolDeptRepository {
     private final EntityManager em;
 
-    public List<SchoolDept> findByIdAndName(Long id, String name) {
+    public List<SchoolDept> findBySchoolAndName(Long schoolId, String name) {
         return em.createQuery("SELECT s FROM SchoolDept s WHERE s.school.id = :id AND UPPER(s.dept) LIKE CONCAT('%',UPPER(:name),'%')", SchoolDept.class)
-                .setParameter("id", id)
+                .setParameter("id", schoolId)
                 .setParameter("name", name)
                 .getResultList();
     }

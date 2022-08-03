@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -50,4 +52,17 @@ public class Applicant {
 
     @Column(name = "created_time")
     private Timestamp created;
+
+    public JSONObject toJSONObjectForRecruitment() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("selection", selection.toJSONObject());
+            json.put("status", status);
+            json.put("created", created);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

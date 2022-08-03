@@ -1,14 +1,10 @@
 package kr.wegather.wegather.repository;
 
-import kr.wegather.wegather.domain.Club;
 import kr.wegather.wegather.domain.ClubMember;
-import kr.wegather.wegather.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import java.util.List;
 
 @Repository
@@ -30,15 +26,17 @@ public class ClubMemberRepository {
         }
     }
 
+    public List<ClubMember> findByClub(Long clubId) {
+
+        return em.createQuery("SELECT cm FROM ClubMember cm JOIN FETCH cm.user u JOIN FETCH cm.role r WHERE cm.club.id = :club", ClubMember.class)
+                .setParameter("club", clubId)
+                .getResultList();
+    }
+
     public ClubMember findByClubAndUser(Long clubId, Long userId) {
         return em.createQuery("SELECT cm FROM ClubMember cm WHERE cm.club.id = :club AND cm.user.id = :user", ClubMember.class)
                 .setParameter("club", clubId)
                 .setParameter("user", userId)
                 .getSingleResult();
-    }
-    public List<ClubMember> findByClub(Long clubId) {
-        return em.createQuery("SELECT cm FROM ClubMember cm WHERE cm.club.id = :club", ClubMember.class)
-                .setParameter("club", clubId)
-                .getResultList();
     }
 }

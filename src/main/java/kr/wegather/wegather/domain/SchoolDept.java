@@ -39,7 +39,7 @@ public class SchoolDept {
     @Column
     private String dept;
 
-    public JSONObject toJSON() {
+    public JSONObject toJSONObject() {
         JSONObject json = new JSONObject();
         try {
             json.put("id", id);

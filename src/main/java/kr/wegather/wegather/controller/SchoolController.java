@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -37,7 +35,7 @@ public class SchoolController {
         // JSON으로 변환
         JSONArray array = new JSONArray();
         for (School school: schools) {
-            array.put(school.toJSON());
+            array.put(school.toJSONObject());
         }
 
         // 응답 객체 생성
@@ -54,12 +52,12 @@ public class SchoolController {
     @GetMapping("/{school_id}")
     public ResponseEntity<String> searchSchoolDepts(@PathVariable("school_id") Long id, @RequestParam String name) {
         // 학과 목록 받아오기
-        List<SchoolDept> schoolDepts = schoolDeptService.findByIdAndName(id, name);
+        List<SchoolDept> schoolDepts = schoolDeptService.findBySchoolAndName(id, name);
 
         // JSON으로 변환
         JSONArray array = new JSONArray();
         for (SchoolDept schoolDept: schoolDepts) {
-            array.put(schoolDept.toJSON());
+            array.put(schoolDept.toJSONObject());
         }
 
         // 응답 객체 생성

@@ -1,14 +1,8 @@
 package kr.wegather.wegather.controller;
 
-import kr.wegather.wegather.domain.Club;
-import kr.wegather.wegather.domain.ClubMember;
-import kr.wegather.wegather.domain.User;
-import kr.wegather.wegather.repository.ClubRepository;
 import kr.wegather.wegather.service.ClubMemberService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

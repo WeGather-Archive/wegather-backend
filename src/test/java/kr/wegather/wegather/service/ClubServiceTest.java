@@ -54,7 +54,7 @@ public class ClubServiceTest {
 
 		Long savedId = clubService.createClub(club);
 
-		clubService.update(savedId, "클럽2");
+//		clubService.updateClub(savedId, "클럽2");
 
 		Assertions.assertEquals(club.getName(), "클럽2");
 

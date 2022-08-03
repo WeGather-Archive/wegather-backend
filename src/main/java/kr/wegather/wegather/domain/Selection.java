@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -58,4 +60,21 @@ public class Selection {
 
     @Column(name = "is_online")
     private Boolean isOnline;
+
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("order", order);
+            json.put("name", name);
+            json.put("start_time", startTime);
+            json.put("end_time", endTime);
+            json.put("location", location);
+            json.put("online_link", onlineLink);
+            json.put("is_online", isOnline);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

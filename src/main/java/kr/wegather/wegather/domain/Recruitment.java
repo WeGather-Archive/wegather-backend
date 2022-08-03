@@ -36,10 +36,6 @@ public class Recruitment {
 
     // Foreign Keys - ManyToOne
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "club_idx")
-    private Club club;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "club_role_idx")
     private ClubRole clubRole;
 

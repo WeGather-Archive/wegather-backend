@@ -1,15 +1,14 @@
 package kr.wegather.wegather.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @DynamicInsert
@@ -32,9 +31,6 @@ public class ClubMember {
 
 
     // Foreign Keys - OneToMany
-    @JsonIgnore
-    @OneToMany(mappedBy = "clubMember")
-    private List<ClubMemberRole> clubMemberRoles = new ArrayList<>();
 
 
     // Foreign Keys - ManyToOne
@@ -46,6 +42,10 @@ public class ClubMember {
     @JoinColumn(name = "club_idx")
     private Club club;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_role_idx")
+    private ClubRole role;
+
 
     // Columns
     @Column(name = "is_deleted")
@@ -53,4 +53,19 @@ public class ClubMember {
 
     @Column(name = "joined_time")
     private Timestamp joinedTime;
+
+
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("user", user.toJSONObjectForClub());
+            json.put("club", club.getId());
+            json.put("joined_time", joinedTime);
+            json.put("club_role", role.toJSONObject());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,7 +18,6 @@ public class QuestionnaireService {
     /* Questionnaire 생성 */
     public Long createQuestionnaire(Questionnaire questionnaire) {
         questionnaireRepository.save(questionnaire);
-
         return questionnaire.getId();
     }
 
@@ -35,7 +33,7 @@ public class QuestionnaireService {
     }
 
     /* Questionnaire 수정 */
-    public void updateQuestionnaire(Long id, String title, ArrayList<String> question, QuestionnaireStatus status) {
+    public void updateQuestionnaire(Long id, String title, List<String> question, QuestionnaireStatus status) {
         Questionnaire questionnaire = questionnaireRepository.findOne(id);
         questionnaire.setTitle(title);
         questionnaire.setQuestion(question);
@@ -47,4 +45,7 @@ public class QuestionnaireService {
         questionnaireRepository.deleteOne(id);
     }
 
+    public List<Questionnaire> findByClub(Long clubId) {
+        return questionnaireRepository.findByClub(clubId);
+    }
 }

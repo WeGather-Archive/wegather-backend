@@ -14,7 +14,7 @@ import java.util.List;
 public class SchoolDeptService {
     private final SchoolDeptRepository schoolDeptRepository;
 
-    public List<SchoolDept> findByIdAndName(Long id, String name) {
-        return schoolDeptRepository.findByIdAndName(id, name);
+    public List<SchoolDept> findBySchoolAndName(Long schoolId, String name) {
+        return schoolDeptRepository.findBySchoolAndName(schoolId, name);
     }
 }
