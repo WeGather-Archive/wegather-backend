@@ -53,7 +53,7 @@ public class Applicant {
     @Column(name = "created_time")
     private Timestamp created;
 
-    public JSONObject toJSONObjectForRecruitment() {
+    public JSONObject toJSONObjectForClub() {
         JSONObject json = new JSONObject();
         try {
             json.put("id", id);

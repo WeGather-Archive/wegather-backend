@@ -26,16 +26,26 @@ public class ClubController {
 	private final ClubRoleService clubRoleService;
 	private final ClubMemberService clubMemberService;
 	private final ClubSchoolService clubSchoolService;
-	private final ApplicantService applicantService;
 	private final QuestionnaireService questionnaireService;
 
 	@ApiOperation(value = "동아리 전체 목록 조회")
-	@GetMapping("/")
-	public ResponseEntity<List<Club>> searchClubs() {
+	@GetMapping("")
+	public ResponseEntity<String> searchClubs() {
 		List<Club> clubs = clubService.findAll();
+		JSONArray clubArray = new JSONArray();
+		for (Club club: clubs) {
+			clubArray.put(club.toJSONObject());
+		}
 //		현재 해당사항 없음
 //		필터 구체화 후 구현
-		return ResponseEntity.status(HttpStatus.OK).body(clubs);
+
+		JSONObject res = new JSONObject();
+		try {
+			res.put("clubs", clubArray);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(res.toString());
 	}
 
 	@ApiOperation(value = "동아리 등록")
@@ -108,8 +118,8 @@ public class ClubController {
 	}
 
 	@ApiOperation(value = "동아리 상세 정보 조회")
-	@GetMapping("/{club_id}")
-	public ResponseEntity<String> searchClub(@PathVariable("club_id") Long id) {
+	@GetMapping("/")
+	public ResponseEntity<String> searchClub(@RequestParam Long id) {
 		// Club 객체 조회
 		Club club;
 		try {

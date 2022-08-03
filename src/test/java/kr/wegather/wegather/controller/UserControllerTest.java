@@ -26,25 +26,26 @@ public class UserControllerTest {
 
     /* !!테스트 할 때 바꿀 변수!! */
     private Long userId = 6L;
+    private String rootPath = "/user";
 
     @Test
     public void signUpTest() throws Exception {
         // given
-        JSONObject user = new JSONObject();
-        user.put("schoolDept", 6478L); // 6478 숭실대학교 AI융합학부
-        user.put("name", "test"); // 본명
-        user.put("email", "test@test.com"); // 이메일 주소
-        user.put("password", "pwd"); // 비밀번호
+        JSONObject req = new JSONObject();
+        req.put("schoolDept", 6478L); // 6478 숭실대학교 AI융합학부
+        req.put("name", "test"); // 본명
+        req.put("email", "test@test.com"); // 이메일 주소
+        req.put("password", "pwd"); // 비밀번호
 
         // when
-        user.put("nickName", "testNickname"); // 닉네임 (작성할지 여부는 선택사항)
+        req.put("nickName", "testNickname"); // 닉네임 (작성할지 여부는 선택사항)
 
         // then
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/user/signup")
+                        .post(rootPath + "/signup")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(user.toString())
+                        .content(req.toString())
         )
                 .andExpect(status().isCreated()) // 정상적인 경우
 //                .andExpect(status().isConflict()) // 이미 생성된 상태인 경우
@@ -54,28 +55,28 @@ public class UserControllerTest {
     @Test
     public void loginTest() throws Exception {
         // given
-        JSONObject user = new JSONObject();
+        JSONObject req = new JSONObject();
 
         // when
-        user.put("email", "test@test.com");
-        user.put("password", "pwd");
+        req.put("email", "test@test.com");
+        req.put("password", "pwd");
 
         // then
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/user/login")
+                        .post(rootPath + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(user.toString())
+                        .content(req.toString())
         )
                 .andExpect(status().isOk()) // 정상적인 경우
                 .andDo(print());
 
-        user = new JSONObject();
+        req = new JSONObject();
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/user/login")
+                        .post(rootPath + "/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(user.toString())
+                        .content(req.toString())
         )
                 .andExpect(status().isBadRequest()) // email이나 password가 비어있을 경우
                 .andDo(print());
@@ -91,7 +92,7 @@ public class UserControllerTest {
         // then
         mockMvc.perform(
                         MockMvcRequestBuilders
-                                .get("/user/" + userId.toString())
+                                .get(rootPath + "/" + userId.toString())
                 )
                 .andExpect(status().isOk()) // 정상적인 경우
 //                .andExpect(status().isBadRequest()) // 없는 유저일 경우 || 삭제된 유저일 경우
@@ -99,7 +100,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUser() throws Exception {
+    public void updateUserTest() throws Exception {
         // given
         JSONObject user = new JSONObject();
         Long userId = this.userId;
@@ -115,7 +116,7 @@ public class UserControllerTest {
         // then
         mockMvc.perform(
                 MockMvcRequestBuilders
-                        .put("/user/" + userId)
+                        .put(rootPath + "/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(user.toString())
         )
@@ -125,7 +126,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updatePassword() throws Exception {
+    public void updatePasswordTest() throws Exception {
         // given
         JSONObject password = new JSONObject();
         Long userId = this.userId;
@@ -136,7 +137,7 @@ public class UserControllerTest {
         // then
         mockMvc.perform(
                         MockMvcRequestBuilders
-                                .patch("/user/pwd/" + userId)
+                                .patch(rootPath + "/pwd/" + userId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(password.toString())
                 )
@@ -146,7 +147,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateEmail() throws Exception {
+    public void updateEmailTest() throws Exception {
         // given
         JSONObject email = new JSONObject();
         Long userId = this.userId;
@@ -157,7 +158,7 @@ public class UserControllerTest {
         // then
         mockMvc.perform(
                         MockMvcRequestBuilders
-                                .patch("/user/email/" + userId)
+                                .patch(rootPath + "/email/" + userId)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(email.toString())
                 )
@@ -167,7 +168,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void deleteUser() throws Exception {
+    public void deleteUserTest() throws Exception {
         // given
         Long userId = this.userId;
 
@@ -176,7 +177,7 @@ public class UserControllerTest {
         // then
         mockMvc.perform(
                         MockMvcRequestBuilders
-                                .delete("/user/" + userId)
+                                .delete(rootPath + "/" + userId)
                 )
                 .andExpect(status().isOk()) // 정상적인 경우
 //                .andExpect(status().isBadRequest()) // 없는 유저일 경우 || 삭제된 유저일 경우
