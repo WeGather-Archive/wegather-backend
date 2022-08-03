@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -29,10 +30,7 @@ public class SchoolController {
 
     @ApiOperation(value = "학교 목록 조회")
     @GetMapping("/")
-    public ResponseEntity<String> searchSchools(HttpServletRequest req) {
-        // 파라미터 받아오기
-        String name = req.getParameter("name");
-
+    public ResponseEntity<String> searchSchools(@RequestParam String name) {
         // 학교 목록 받아오기
         List<School> schools = schoolService.findByName(name);
 
@@ -54,10 +52,7 @@ public class SchoolController {
 
     @ApiOperation(value = "학과 목록 조회")
     @GetMapping("/{school_id}")
-    public ResponseEntity<String> searchSchoolDepts(@PathVariable("school_id") Long id, HttpServletRequest req) {
-        // 파라미터 받아오기
-        String name = req.getParameter("name");
-
+    public ResponseEntity<String> searchSchoolDepts(@PathVariable("school_id") Long id, @RequestParam String name) {
         // 학과 목록 받아오기
         List<SchoolDept> schoolDepts = schoolDeptService.findByIdAndName(id, name);
 

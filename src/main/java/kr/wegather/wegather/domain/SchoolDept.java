@@ -43,7 +43,7 @@ public class SchoolDept {
         JSONObject json = new JSONObject();
         try {
             json.put("id", id);
-            json.put("school", school);
+            json.put("school", school.getId());
             json.put("college", college);
             json.put("dept", dept);
         } catch (JSONException e) {
