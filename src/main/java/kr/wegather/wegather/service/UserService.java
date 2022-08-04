@@ -35,12 +35,9 @@ public class UserService {
     /* 로그인 */
     public String login(String email, String password) {
         // 유저 검색
-        User user;
-        try {
-            user = userRepository.findOneByEmail(email);
-        } catch (Exception e) {
+        User user = userRepository.findOneByEmail(email);
+        if (user == null)
             throw new UserException(UserExceptionType.USER_NOT_FOUND);
-        }
 
         BCryptPasswordEncoder Bcrypt = new BCryptPasswordEncoder();
         if (!Bcrypt.matches(password, user.getPassword()))
@@ -62,13 +59,7 @@ public class UserService {
     /* User 조회 */
     // 단건 조회 - By Id
     public User findOne(Long id) {
-        User user;
-        try {
-            user = userRepository.findOne(id);
-        } catch (Exception e) {
-            throw new UserException(UserExceptionType.USER_NOT_FOUND);
-        }
-        return user;
+        return userRepository.findOne(id);
     }
 
     /* User 수정 */
@@ -88,17 +79,17 @@ public class UserService {
     }
 
     // Password 수정
-    public void changePassword(Long id, String password) {
-        User user;
-        try {
-            user = userRepository.findOne(id);
-        } catch (Exception e) {
+    public void changePassword(Long id, String password, String newPassword) {
+        User user = userRepository.findOne(id);
+        if (user == null)
             throw new UserException(UserExceptionType.USER_NOT_FOUND);
-        }
+
+        BCryptPasswordEncoder Bcrypt = new BCryptPasswordEncoder();
+        if (!Bcrypt.matches(password, user.getPassword()))
+            throw new UserException(UserExceptionType.WRONG_INPUT);
 
         // 비밀번호 암호화
-        BCryptPasswordEncoder Bcrypt = new BCryptPasswordEncoder();
-        user.setPassword(Bcrypt.encode(password));
+        user.setPassword(Bcrypt.encode(newPassword));
     }
 
     // Email 수정 - 이메일 인증 로직 추가

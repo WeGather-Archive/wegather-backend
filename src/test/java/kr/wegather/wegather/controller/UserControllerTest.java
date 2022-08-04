@@ -47,8 +47,8 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(req.toString())
         )
-                .andExpect(status().isCreated()) // 정상적인 경우
-//                .andExpect(status().isConflict()) // 이미 생성된 상태인 경우
+//                .andExpect(status().isCreated()) // 정상적인 경우
+                .andExpect(status().isConflict()) // 이미 생성된 상태인 경우
                 .andDo(print());
     }
 
@@ -85,7 +85,7 @@ public class UserControllerTest {
     @Test
     public void searchUserTest() throws Exception {
         // given
-        Long userId = this.userId;
+        Long userId = 7L;
 
         // when
 
@@ -95,7 +95,7 @@ public class UserControllerTest {
                                 .get(rootPath + "/" + userId.toString())
                 )
                 .andExpect(status().isOk()) // 정상적인 경우
-//                .andExpect(status().isBadRequest()) // 없는 유저일 경우 || 삭제된 유저일 경우
+//                .andExpect(status().isNotFound()) // 없는 유저일 경우 || 삭제된 유저일 경우
                 .andDo(print());
     }
 
@@ -121,7 +121,7 @@ public class UserControllerTest {
                         .content(user.toString())
         )
                 .andExpect(status().isOk()) // 정상적인 경우
-//                .andExpect(status().isBadRequest()) // 없는 유저일 경우 || 삭제된 유저일 경우
+//                .andExpect(status().isNotFound()) // 없는 유저일 경우 || 삭제된 유저일 경우
                 .andDo(print());
     }
 
@@ -133,6 +133,7 @@ public class UserControllerTest {
 
         // when
         password.put("password", "newpassword!");
+        password.put("newPassword", "newpassword!");
 
         // then
         mockMvc.perform(
@@ -142,7 +143,7 @@ public class UserControllerTest {
                                 .content(password.toString())
                 )
                 .andExpect(status().isOk()) // 정상적인 경우
-//                .andExpect(status().isBadRequest()) // 없는 유저일 경우 || 삭제된 유저일 경우
+//                .andExpect(status().isNotFound()) // 없는 유저일 경우 || 삭제된 유저일 경우
                 .andDo(print());
     }
 
@@ -150,7 +151,7 @@ public class UserControllerTest {
     public void updateEmailTest() throws Exception {
         // given
         JSONObject email = new JSONObject();
-        Long userId = this.userId;
+        Long userId = 6L;
 
         // when
         email.put("email", "aaaa@test.com");
@@ -162,15 +163,16 @@ public class UserControllerTest {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(email.toString())
                 )
-//                .andExpect(status().isOk()) // 정상적인 경우
-                .andExpect(status().isBadRequest()) // 없는 유저일 경우 || 삭제된 유저일 경우
+                .andExpect(status().isOk()) // 정상적인 경우
+//                .andExpect(status().isConflict()) // 이미 존재하는 이메일일 경우
+//                .andExpect(status().isNotFound()) // 없는 유저일 경우 || 삭제된 유저일 경우
                 .andDo(print());
     }
 
     @Test
     public void deleteUserTest() throws Exception {
         // given
-        Long userId = this.userId;
+        Long userId = 7L;
 
         // when
 

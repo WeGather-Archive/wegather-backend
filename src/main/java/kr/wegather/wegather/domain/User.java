@@ -84,6 +84,26 @@ public class User{
     @Column(name = "is_verified")
     private Boolean isVerified;
 
+    public JSONObject toJSONObjet() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("schoolDept", schoolDept);
+            json.put("nickname", nickname);
+            json.put("avatar", avatar);
+            json.put("profile", profile);
+            json.put("name", name);
+            json.put("email", email);
+            json.put("phone", phone);
+            json.put("create_time", createdTime);
+            json.put("auth_level", authLevel);
+            json.put("isVerified", isVerified);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
+
     public JSONObject toJSONObjectForClub() {
         JSONObject json = new JSONObject();
         try {

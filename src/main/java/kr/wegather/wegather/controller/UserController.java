@@ -6,6 +6,7 @@ import kr.wegather.wegather.domain.User;
 import kr.wegather.wegather.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -68,15 +69,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> searchUser(@PathVariable("id") Long id) {
-        User user = new User();
-        try {
-            user = userService.findOne(id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(user);
-        }
+    public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
+        User user = userService.findOne(id);
+        if (user == null)
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
 
-        return ResponseEntity.status(HttpStatus.OK).body(user);
+        JSONObject res = user.toJSONObjet();
+        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
     }
 
     @PutMapping("/{id}")
@@ -93,9 +92,9 @@ public class UserController {
 
     @PatchMapping("/pwd/{id}")
     public ResponseEntity updatePassword(@PathVariable("id") Long id, @RequestBody updatePasswordRequest request) {
-        String password = request.password;
+        String password = request.password, newPassword = request.newPassword;
         try {
-            userService.changePassword(id, password);
+            userService.changePassword(id, password, newPassword);
         } catch (Exception e) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
@@ -154,6 +153,7 @@ public class UserController {
     @Data
     static class updatePasswordRequest {
         private String password;
+        private String newPassword;
     }
 
     @Data
