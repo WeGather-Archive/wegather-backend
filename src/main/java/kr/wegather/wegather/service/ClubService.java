@@ -25,21 +25,22 @@ public class ClubService {
 
 
 	/* club 조회 */
-	// 단건 조회 - Id
+	// 단건 조회 - By Id
 	public Club findOne(Long id) {
 		return clubRepository.findOne(id);
 	}
 
-	// 단건 조회 - Id
+	// 단건 조회 with User - By Id
 	public Club findOneWithUser(Long id) {
 		return clubRepository.findOneWithUser(id);
 	}
 
-	// 복수 조회 - 필터
+	// 복수 조회
 	public List<Club> findAll() {
 		return clubRepository.findAll();
 	}
 
+	// 복수 조회 - By filter
 	public List<Club> findByName(String clubName) {
 		return clubRepository.findByName(clubName);
 	}

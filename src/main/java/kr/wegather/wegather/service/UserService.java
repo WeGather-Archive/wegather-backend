@@ -18,7 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /* 회원가입 */
+    /* User 생성(회원가입) */
     public Long register(User user) {
         String email = user.getEmail();
         validateDuplicateUser(email); // 중복 회원 검증
@@ -32,6 +32,7 @@ public class UserService {
         return user.getId();
     }
 
+    /* 로그인 */
     public String login(String email, String password) {
         // 유저 검색
         User user;
@@ -58,6 +59,8 @@ public class UserService {
         return token.toString();
     }
 
+    /* User 조회 */
+    // 단건 조회 - By Id
     public User findOne(Long id) {
         User user;
         try {
@@ -68,6 +71,8 @@ public class UserService {
         return user;
     }
 
+    /* User 수정 */
+    // Minor Info 수정
     public void updateUser(Long id, String nickname, String avatar, String profile, String phone) {
         User user;
         try {
@@ -82,6 +87,7 @@ public class UserService {
         user.setPhone(phone);
     }
 
+    // Password 수정
     public void changePassword(Long id, String password) {
         User user;
         try {
@@ -95,6 +101,7 @@ public class UserService {
         user.setPassword(Bcrypt.encode(password));
     }
 
+    // Email 수정 - 이메일 인증 로직 추가
     public void changeEmail(Long id, String email) {
         User user;
         try {
@@ -106,6 +113,7 @@ public class UserService {
         user.setEmail(email);
     }
 
+    /* User 삭제 */
     public void delete(Long id) {
         User user;
         try {
@@ -116,6 +124,7 @@ public class UserService {
         user.setIsDeleted(true);
     }
 
+    // 중복 검사
     private void validateDuplicateUser(String email) {
         // 파라미터 검사
         try {

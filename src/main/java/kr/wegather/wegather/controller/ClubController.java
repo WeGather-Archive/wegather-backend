@@ -3,6 +3,7 @@ package kr.wegather.wegather.controller;
 import io.swagger.annotations.ApiOperation;
 import kr.wegather.wegather.domain.*;
 import kr.wegather.wegather.domain.enums.ClubRoleAuthLevel;
+import kr.wegather.wegather.domain.enums.ClubRoleIsDefault;
 import kr.wegather.wegather.domain.enums.QuestionnaireStatus;
 import kr.wegather.wegather.service.*;
 import lombok.Data;
@@ -75,6 +76,7 @@ public class ClubController {
 		clubRole.setClub(dummyClub);
 		clubRole.setRole("동아리장");
 		clubRole.setAuthLevel(ClubRoleAuthLevel.OPERATOR);
+		clubRole.setIsDefault(ClubRoleIsDefault.DEFAULT_OPERATOR);
 		Long clubRoleId = clubRoleService.createClubRole(clubRole);
 		dummyClubRole.setId(clubRoleId);
 
@@ -82,6 +84,7 @@ public class ClubController {
 		clubRole.setClub(dummyClub);
 		clubRole.setRole("동아리원");
 		clubRole.setAuthLevel(ClubRoleAuthLevel.MEMBER);
+		clubRole.setIsDefault(ClubRoleIsDefault.DEFAULT_MEMBER);
 		clubRoleService.createClubRole(clubRole);
 
 		// 동아리장 생성 및 역할 부여

@@ -26,12 +26,12 @@ public class ApplicantService {
     }
 
     /* Applicant 조회 */
-    // 단건 조회 - Id
+    // 단건 조회 - By Id
     public Applicant findOne(Long id) {
         return applicantRepository.findOne(id);
     }
 
-    // 복수 조회 - Recruitment
+    // 복수 조회 - By Recruitment
     public List<Applicant> findByRecruitment(Long recruitmentId) {
         return applicantRepository.findByRecruitment(recruitmentId);
     }

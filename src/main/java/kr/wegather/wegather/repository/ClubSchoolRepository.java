@@ -17,9 +17,9 @@ public class ClubSchoolRepository {
         return clubSchool.getId();
     }
 
-    public List<ClubSchool> findByClub(Long club_id) {
+    public List<ClubSchool> findByClub(Long clubId) {
         return em.createQuery("SELECT cs FROM ClubSchool cs JOIN FETCH cs.school s WHERE cs.club.id = :club", ClubSchool.class)
-                .setParameter("club", club_id)
+                .setParameter("club", clubId)
                 .getResultList();
     }
 }

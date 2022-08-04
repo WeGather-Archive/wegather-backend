@@ -14,6 +14,8 @@ import java.util.List;
 public class SchoolDeptService {
     private final SchoolDeptRepository schoolDeptRepository;
 
+    /* SchoolDept 조회 */
+    // 복수 조회 - By School
     public List<SchoolDept> findBySchoolAndName(Long schoolId, String name) {
         return schoolDeptRepository.findBySchoolAndName(schoolId, name);
     }

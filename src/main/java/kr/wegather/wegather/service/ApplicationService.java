@@ -23,12 +23,12 @@ public class ApplicationService {
     }
 
     /* Application 조회 */
-    // 단건 조회 - Id
+    // 단건 조회 - By Id
     public Application findOne(Long id) {
         return applicationRepository.findOne(id);
     }
 
-    // 복수 조회 - Questionnaire
+    // 복수 조회 - By Questionnaire
     public List<Application> findByQuestionnaire(Long questionnaireId) {
         return applicationRepository.findByQuestionnaire(questionnaireId);
     }

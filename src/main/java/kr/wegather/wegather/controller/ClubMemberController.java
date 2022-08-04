@@ -22,7 +22,7 @@ public class ClubMemberController {
     private final ClubMemberService clubMemberService;
 
     @PostMapping("/{club_id}")
-    public ResponseEntity<String> createManyClubMembers(@PathVariable("club_id") Long clubId, @RequestBody createClubMemberRequest request) {
+    public ResponseEntity<String> createClubMembers(@PathVariable("club_id") Long clubId, @RequestBody createClubMemberRequest request) {
         ArrayList<Long> clubMembers = request.clubMembers;
 
         JSONObject res = clubMemberService.createClubMembers(clubId, clubMembers);

@@ -2,6 +2,7 @@ package kr.wegather.wegather.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.wegather.wegather.domain.enums.ClubRoleAuthLevel;
+import kr.wegather.wegather.domain.enums.ClubRoleIsDefault;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
@@ -45,12 +46,16 @@ public class ClubRole {
     @Enumerated(EnumType.ORDINAL)
     private ClubRoleAuthLevel authLevel; // OPERATOR, MEMBER
 
+    @Column(name = "is_default")
+    private ClubRoleIsDefault isDefault;
+
     public JSONObject toJSONObject() {
         JSONObject json = new JSONObject();
         try {
             json.put("id", id);
             json.put("role", role);
             json.put("auth_level", authLevel);
+            json.put("is_default", isDefault);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

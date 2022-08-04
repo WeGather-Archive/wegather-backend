@@ -20,9 +20,9 @@ public class ClubSchoolService {
     }
 
     /* 동아리 학교 조회 */
-
-    public List<ClubSchool> findByClub(Long club_id) {
-        return clubSchoolRepository.findByClub(club_id);
+    // 복수 조회 - By Club
+    public List<ClubSchool> findByClub(Long clubId) {
+        return clubSchoolRepository.findByClub(clubId);
     }
 
     /* 동아리 학교 수정 */
