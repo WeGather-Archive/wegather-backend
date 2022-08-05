@@ -88,7 +88,7 @@ public class User{
         JSONObject json = new JSONObject();
         try {
             json.put("id", id);
-            json.put("schoolDept", schoolDept);
+            json.put("schoolDept", schoolDept.toJSONObject());
             json.put("nickname", nickname);
             json.put("avatar", avatar);
             json.put("profile", profile);

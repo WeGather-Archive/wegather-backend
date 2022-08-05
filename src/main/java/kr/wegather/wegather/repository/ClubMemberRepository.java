@@ -38,7 +38,17 @@ public class ClubMemberRepository {
                 .getSingleResult();
     }
 
+    // 단건 조회 - By Recruitment & User
+    public ClubMember findByRecruitmentAndUser(Long recruitmentId, Long userId) {
+        return em.createQuery("SELECT cm FROM ClubMember cm WHERE cm.isDeleted = 0 AND cm.user.id = :user AND cm.club.id = ANY(SELECT cr.club.id FROM Recruitment r JOIN r.clubRole cr WHERE r.id = :recruitment)", ClubMember.class)
+                .setParameter("recruitment", recruitmentId)
+                .setParameter("user", userId)
+                .getSingleResult();
+    }
+
+
     // 복수 조회 - By Club
+
     public List<ClubMember> findByClub(Long clubId) {
 
         return em.createQuery("SELECT cm FROM ClubMember cm JOIN FETCH cm.user u JOIN FETCH cm.role r WHERE cm.club.id = :club", ClubMember.class)
@@ -46,10 +56,9 @@ public class ClubMemberRepository {
                 .getResultList();
     }
 
-
     /* ClubMember 수정 */
-    // Single Update - By Id
 
+    // Single Update - By Id
 
     // Bulk Update - By ClubRole
     public Integer updateClubMembersByClubRole(Long roleId, Long newRoleId) {

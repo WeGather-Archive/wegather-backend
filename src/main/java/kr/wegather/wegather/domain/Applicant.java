@@ -53,6 +53,19 @@ public class Applicant {
     @Column(name = "created_time")
     private Timestamp created;
 
+    public JSONObject toJSONObjectForRecruitment() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("status", status);
+            json.put("created", created);
+            json.put("user", user.toJSONObjet());
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
+
     public JSONObject toJSONObjectForClub() {
         JSONObject json = new JSONObject();
         try {

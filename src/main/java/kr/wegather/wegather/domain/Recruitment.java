@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -49,4 +52,39 @@ public class Recruitment {
 
     @Enumerated(EnumType.ORDINAL)
     private RecruitmentStatus status; // CREATED, ENROLL, PROCESSING, CLOSED
+
+    public JSONObject toJSONObjectForClub() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            json.put("clubRole", clubRole.toJSONObject());
+            json.put("title", title);
+            json.put("description", description);
+            json.put("created", created);
+            json.put("status", status);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
+
+    public JSONObject toJSONObject() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("id", id);
+            JSONArray selectionArray = new JSONArray();
+            for (Selection selection: selections) {
+                selectionArray.put(selection.getId());
+            }
+            json.put("selections", selectionArray);
+            json.put("clubRole", clubRole.toJSONObject());
+            json.put("title", title);
+            json.put("description", description);
+            json.put("created", created);
+            json.put("status", status);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return json;
+    }
 }

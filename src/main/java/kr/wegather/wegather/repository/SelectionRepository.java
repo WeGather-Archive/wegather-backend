@@ -23,17 +23,33 @@ public class SelectionRepository {
     }
 
     public List<Selection> findByRecruitment(Long recruitmentId) {
-        return em.createQuery("SELECT s FROM Selection s WHERE s.recruitment = :recruitment", Selection.class)
+        return em.createQuery("SELECT s FROM Selection s WHERE s.recruitment.id = :recruitment", Selection.class)
                 .setParameter("recruitment", recruitmentId)
                 .getResultList();
     }
 
+    public Selection findOneWithUser(Long id) {
+        return em.createQuery("SELECT s FROM Selection s LEFT JOIN FETCH s.applicants a JOIN FETCH a.user u JOIN FETCH u.schoolDept sd JOIN FETCH sd.school WHERE s.id = :id", Selection.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
+    public Selection findByRecruitmentAndOrder(Long recruitmentId, Integer order) {
+        return em.createQuery("SELECT s FROM Selection s WHERE s.recruitment.id = :recruitment AND s.order = :order", Selection.class)
+                .setParameter("recruitment", recruitmentId)
+                .setParameter("order", order)
+                .getSingleResult();
+    }
+
+    public Integer updateSelectionByRecruitmentAndOrder(Long recruitmentId, Integer order) {
+        return em.createQuery("UPDATE Selection s SET s.order = s.order - 1 WHERE s.recruitment.id = :recruitment AND s.order > :order")
+                .setParameter("recruitment", recruitmentId)
+                .setParameter("order", order)
+                .executeUpdate();
+    }
+
     public void deleteOne(Long id) {
         Selection selection = em.find(Selection.class, id);
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
         em.remove(selection);
-        em.flush();
-        transaction.commit();
     }
 }

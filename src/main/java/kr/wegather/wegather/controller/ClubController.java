@@ -28,6 +28,7 @@ public class ClubController {
 	private final ClubMemberService clubMemberService;
 	private final ClubSchoolService clubSchoolService;
 	private final QuestionnaireService questionnaireService;
+	private final RecruitmentService recruitmentService;
 
 	@ApiOperation(value = "동아리 전체 목록 조회")
 	@GetMapping("")
@@ -270,6 +271,40 @@ public class ClubController {
 		return new ResponseEntity(HttpStatus.CREATED);
 	}
 
+	@ApiOperation(value = "동아리 내 전체 모집 목록 조회 API")
+	@GetMapping("/recruitment")
+	public ResponseEntity<String> searchRecruitments(@RequestParam Long id) {
+
+		List<Recruitment> recruitments = recruitmentService.findByClub(id);
+		JSONArray recruitmentArray = new JSONArray();
+		for (Recruitment recruitment: recruitments) {
+			recruitmentArray.put(recruitment.toJSONObjectForClub());
+		}
+
+		JSONObject res = new JSONObject();
+		try {
+			res.put("recruitment", recruitmentArray);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(res.toString());
+	}
+
+	@ApiOperation(value = "모집 생성")
+	@PostMapping("/recruitment/{club_role_id}")
+	public ResponseEntity createRecruitment(@PathVariable("club_role_id") Long id, @RequestBody createRecruitmentRequest request) {
+		String title = request.title, description = request.description;
+		Long recruitmentId = recruitmentService.createRecruitment(id, title, description);
+
+		JSONObject res = new JSONObject();
+		try {
+			res.put("recruitmentId", recruitmentId);
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
+		}
+		return ResponseEntity.status(HttpStatus.CREATED).body(res.toString());
+	}
+
 	@Data
 	static class createClubRequest {
 
@@ -297,5 +332,11 @@ public class ClubController {
 	static class createQuestionnaireRequest {
 		private Long selectionId;
 		private String title;
+	}
+
+	@Data
+	static class createRecruitmentRequest {
+		private String title;
+		private String description;
 	}
 }
