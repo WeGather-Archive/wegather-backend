@@ -273,9 +273,9 @@ public class ClubController {
 
 	@ApiOperation(value = "동아리 내 전체 모집 목록 조회 API")
 	@GetMapping("/recruitment")
-	public ResponseEntity<String> searchRecruitments(@RequestParam Long id) {
+	public ResponseEntity<String> searchRecruitments(@RequestParam("id") Long clubId) {
 
-		List<Recruitment> recruitments = recruitmentService.findByClub(id);
+		List<Recruitment> recruitments = recruitmentService.findByClub(clubId);
 		JSONArray recruitmentArray = new JSONArray();
 		for (Recruitment recruitment: recruitments) {
 			recruitmentArray.put(recruitment.toJSONObjectForClub());

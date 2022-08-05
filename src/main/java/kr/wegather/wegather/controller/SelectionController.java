@@ -14,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -41,7 +40,8 @@ public class SelectionController {
         String name = request.name, location = request.location, onlineLink = request.onlineLink;
         Integer order = request.order;
         Boolean isOnline = request.isOnline;
-        Timestamp start = request.start, end = request.end;
+        Timestamp start = request.start;
+        Timestamp end = request.end;
         selectionService.updateSelection(id, order, name, start, end, location, onlineLink, isOnline);
 
         return new ResponseEntity(HttpStatus.OK);

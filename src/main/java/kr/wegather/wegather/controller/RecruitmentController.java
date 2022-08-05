@@ -3,7 +3,6 @@ package kr.wegather.wegather.controller;
 import io.swagger.annotations.ApiOperation;
 import kr.wegather.wegather.domain.Recruitment;
 import kr.wegather.wegather.domain.enums.RecruitmentStatus;
-import kr.wegather.wegather.service.ApplicantService;
 import kr.wegather.wegather.service.RecruitmentService;
 import kr.wegather.wegather.service.SelectionService;
 import lombok.Data;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/recruitment")
 public class RecruitmentController {
-    private final ApplicantService applicantService;
     private final RecruitmentService recruitmentService;
     private final SelectionService selectionService;
 

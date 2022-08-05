@@ -217,4 +217,42 @@ public class ClubControllerTest {
                 .andExpect(status().isConflict()) // 해당 전형에 이미 폼이 존재하는 경우
                 .andDo(print());
     }
+
+    @Test
+    public void searchRecruitmentsTest() throws Exception {
+        // given
+        Long clubId = 22L;
+
+        // when
+
+        // then
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get(rootPath + "/recruitment")
+                        .param("id", clubId.toString())
+        )
+                .andExpect(status().isOk()) // 정상적인 경우
+                .andDo(print());
+    }
+
+    @Test
+    public void createRecruitmentTest() throws Exception {
+        // given
+        Long clubRoleId = 38L;
+        JSONObject req = new JSONObject();
+        req.put("title", "새로운 모집명");
+        req.put("description", "모집에 대한 소개");
+
+        // when
+
+        // then
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post(rootPath + "/recruitment/" + clubRoleId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(req.toString())
+        )
+                .andExpect(status().isCreated())
+                .andDo(print());
+    }
 }
