@@ -64,7 +64,7 @@ public class UserController {
 
         cookie.setMaxAge(30 * 60 * 1000);
 
-        res.addCookie(cookie);
+//        res.addCookie(cookie);
         return new ResponseEntity(HttpStatus.OK);
     }
 

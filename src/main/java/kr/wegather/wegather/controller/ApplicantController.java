@@ -21,7 +21,7 @@ public class ApplicantController {
     @ApiOperation(value = "특정 모집 지원하기")
     @PostMapping("/{recruitment_id}")
     public ResponseEntity<String> createApplicant(@PathVariable("recruitment_id") Long id) {
-        Long userId = 5L;
+        Long userId = 1L;
         Long applicantId = applicantService.createApplicant(id, userId);
 
         JSONObject res = new JSONObject();

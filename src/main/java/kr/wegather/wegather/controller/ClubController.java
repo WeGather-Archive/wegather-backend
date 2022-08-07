@@ -54,7 +54,7 @@ public class ClubController {
 	@PostMapping("/")
 	public ResponseEntity<String> createClub(@RequestBody createClubRequest request){
 		// 유저 데이터
-		Long userId = 11L; // Token에서 가져오기
+		Long userId = 1L; // Token에서 가져오기
 		User user = userService.findOne(userId);
 
 		// 앞으로 쓸 더미 데이터 생성
