@@ -54,6 +54,9 @@ public class Questionnaire {
     @Column(columnDefinition = "json")
     private List<String> question;
 
+    @Column(name = "due_date")
+    private Timestamp dueDate;
+
     @Column(name = "created_time")
     private Timestamp created;
 
@@ -70,8 +73,9 @@ public class Questionnaire {
             json.put("selection", selection.getId());
             json.put("title", title);
             json.put("question", question);
+            json.put("dueDate", dueDate);
             json.put("created", created);
-            json.put("last_modified", lastModified);
+            json.put("lastModified", lastModified);
             json.put("status", status);
         } catch (JSONException e) {
             throw new RuntimeException(e);
