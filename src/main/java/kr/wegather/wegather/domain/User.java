@@ -9,17 +9,20 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
 @DynamicInsert
 @DynamicUpdate
 @Getter @Setter
-public class User{
+public class User implements UserDetails {
 
     // Primary Key
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -112,5 +115,47 @@ public class User{
             throw new RuntimeException(e);
         }
         return json;
+    }
+
+
+    // spring security 의 UserDetails 상속
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Collection <GrantedAuthority> collectors = new ArrayList<>();
+        collectors.add(() -> {
+            return "계정별 등록할 권한";
+        });
+
+        return collectors;
+    }
+
+    // 우리 서비스는 email 이 id
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    // 계정의 만료여부 리턴 (true : 만료 안됨)
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    // 계정의 잠금여부 리턴 (true : 잠기지 않음)
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    // 비밀번호의 만료여부 리턴 (true : 만료 안됨)
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    // 계정의 활성여부 리턴 (true : 활성화)
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

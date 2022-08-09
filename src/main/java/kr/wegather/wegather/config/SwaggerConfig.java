@@ -1,4 +1,4 @@
-package kr.wegather.wegather;
+package kr.wegather.wegather.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

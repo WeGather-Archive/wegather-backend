@@ -18,44 +18,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /* User 생성(회원가입) */
-    public Long register(User user) {
-        String email = user.getEmail();
-        validateDuplicateUser(email); // 중복 회원 검증
-
-        // 비밀번호 암호화
-        BCryptPasswordEncoder Bcrypt = new BCryptPasswordEncoder();
-        user.setPassword(Bcrypt.encode(user.getPassword()));
-
-        userRepository.save(user);
-
-        return user.getId();
-    }
-
-    /* 로그인 */
-    public String login(String email, String password) {
-        // 유저 검색
-        User user = userRepository.findOneByEmail(email);
-        if (user == null)
-            throw new UserException(UserExceptionType.USER_NOT_FOUND);
-
-        BCryptPasswordEncoder Bcrypt = new BCryptPasswordEncoder();
-        if (!Bcrypt.matches(password, user.getPassword()))
-            throw new UserException(UserExceptionType.WRONG_INPUT);
-
-        // token 발급
-        JSONObject token = new JSONObject();
-        try {
-            token.put("id", user.getId());
-            token.put("nickname", user.getNickname());
-            token.put("name", user.getName());
-            token.put("avatar", user.getAvatar());
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        return token.toString();
-    }
-
     /* User 조회 */
     // 단건 조회 - By Id
     public User findOne(Long id) {

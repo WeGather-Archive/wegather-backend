@@ -22,52 +22,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody signUpRequest signUpRequest) {
-        // Set User Info
-        SchoolDept schoolDept = new SchoolDept();
-        schoolDept.setId(signUpRequest.schoolDept);
-        User newUser = new User();
-        newUser.setSchoolDept(schoolDept);
-        newUser.setName(signUpRequest.name);
-        if (signUpRequest.nickName != null)
-            newUser.setNickname(signUpRequest.nickName);
-        else {
-            newUser.setNickname(signUpRequest.name);
-        }
-        newUser.setEmail(signUpRequest.email);
-        newUser.setPassword (signUpRequest.password);
-
-        userService.register(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity login(@RequestBody loginRequest request, HttpServletResponse res) {
-        // Check req
-        String email = request.email, password = request.password;
-        if (email == null || password == null)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-
-        // 맞다면 Token 발급
-        String token;
-        try {
-            token = userService.login(email, password);
-        } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-        Cookie cookie = new Cookie(
-                "token",
-                token
-        );
-
-        cookie.setMaxAge(30 * 60 * 1000);
-
-//        res.addCookie(cookie);
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
         User user = userService.findOne(id);
