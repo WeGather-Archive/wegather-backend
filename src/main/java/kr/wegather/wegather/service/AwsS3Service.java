@@ -45,7 +45,6 @@ public class AwsS3Service {
 
     public void deleteImage(String URL) {
         String filename = URL.substring(URL.lastIndexOf("/") + 1);
-        System.out.println(filename);
         amazonS3.deleteObject(new DeleteObjectRequest(bucket, filename));
     }
 
