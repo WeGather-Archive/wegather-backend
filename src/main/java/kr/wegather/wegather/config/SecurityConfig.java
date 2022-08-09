@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.cors().configurationSource(corsConfigurationSource())
 				.and()
 				.authorizeRequests()
-					.antMatchers("/user/**", "/login/**").authenticated() // /user/** 만 로그인 필요
+//					.antMatchers("/user/**", "/login/**").authenticated() // 로그인 필요
 				.anyRequest().permitAll() // 나머지는 허용
 					.and()
 				.formLogin()
