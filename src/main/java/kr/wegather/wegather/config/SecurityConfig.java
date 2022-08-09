@@ -40,9 +40,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.passwordParameter("password")
 				.loginProcessingUrl("/auth/login")
 				.defaultSuccessUrl("/login/success")
-				.failureUrl("/auth/fail")
+//				.failureUrl("/auth/fail")
 //				.successHandler(customAuthenticationSuccessHandler)
-//				.failureHandler(customAuthenticationFailureHandler)
+				.failureHandler(customAuthenticationFailureHandler)
 				.and()
 				.logout()
 				.invalidateHttpSession(true) // 로그아웃 시 세션초기화

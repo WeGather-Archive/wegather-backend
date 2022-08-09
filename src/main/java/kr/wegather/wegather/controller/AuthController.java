@@ -1,5 +1,6 @@
 package kr.wegather.wegather.controller;
 
+import io.swagger.annotations.ApiOperation;
 import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
 import kr.wegather.wegather.service.AuthService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
 
@@ -26,6 +28,8 @@ public class AuthController {
 	AuthService authService;
 
 	// 회원가입
+
+	@ApiOperation(value = "회원가입")
 	@PostMapping("/join")
 	public ResponseEntity<User> join(@RequestBody signUpRequest signUpRequest) {
 		// Set User Info
@@ -48,6 +52,7 @@ public class AuthController {
 	}
 
 	// login 성공 시, 클라이언트에 현재 user 의 id 값 리턴
+	@ApiIgnore
 	@GetMapping("/login/success")
 	public ResponseEntity<Long> loginSuccess(){
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,6 +61,8 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.OK).body(user.getId());
 	}
 
+
+	@ApiIgnore
 	@GetMapping("/auth/fail")
 	public ResponseEntity loginFail(){
 		return new ResponseEntity("로그인 실패",HttpStatus.UNAUTHORIZED);
