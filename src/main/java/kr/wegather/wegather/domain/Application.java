@@ -5,15 +5,25 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @DynamicInsert
 @DynamicUpdate
 @Getter @Setter
+@Table(
+        uniqueConstraints={
+                @UniqueConstraint(
+                        name="applicant_idx_questionnaire_idx",
+                        columnNames={"applicant_idx", "questionnaire_idx"}
+                )
+        }
+)
 public class Application {
 
     // Primary Key
@@ -37,7 +47,7 @@ public class Application {
     // Columns
     @Convert(converter = StringListConverter.class)
     @Column(columnDefinition = "json")
-    private ArrayList<String> answer;
+    private List<String> answer;
 
     @Column(name = "created_time")
     private Timestamp created;

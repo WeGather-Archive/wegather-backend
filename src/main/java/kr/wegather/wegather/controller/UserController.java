@@ -1,11 +1,15 @@
 package kr.wegather.wegather.controller;
 
 import io.swagger.annotations.ApiModelProperty;
+import kr.wegather.wegather.domain.Club;
 import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
+import kr.wegather.wegather.service.ClubService;
 import kr.wegather.wegather.service.UserService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,6 +26,54 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
 
     private final UserService userService;
+    private final ClubService clubService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
+        User user = userService.findOne(id);
+        if (user == null)
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+
+        JSONObject res = user.toJSONObjet();
+        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
+    }
+
+    @GetMapping("/club")
+    public ResponseEntity<String> searchMyClubs(@RequestParam("uid") Long userId) {
+        // userId: Parameter 말고 Token에서 가져오기
+        List<Club> clubs = clubService.findByUserClubMember(userId);
+        JSONArray clubArray = new JSONArray();
+
+        for (Club club: clubs) {
+            clubArray.put(club.toJSONObject());
+        }
+
+        JSONObject res = new JSONObject();
+        try {
+            res.put("clubs", clubArray);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
+    }
+
+    @GetMapping("/club/pending")
+    public ResponseEntity<String> searchClubPending(@RequestParam("uid") Long userId) {
+        // userId: Parameter 말고 Token에서 가져오기
+        List<Club> clubs = clubService.findByUserApplicant(userId);
+        JSONArray clubArray = new JSONArray();
+        for (Club club: clubs) {
+            clubArray.put(club.toJSONObject());
+        }
+
+        JSONObject res = new JSONObject();
+        try {
+            res.put("clubs", clubArray);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<User> signUp(@RequestBody signUpRequest signUpRequest) {
@@ -64,18 +117,8 @@ public class UserController {
 
         cookie.setMaxAge(30 * 60 * 1000);
 
-        res.addCookie(cookie);
+//        res.addCookie(cookie);
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
-        User user = userService.findOne(id);
-        if (user == null)
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-
-        JSONObject res = user.toJSONObjet();
-        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
     }
 
     @PutMapping("/{id}")

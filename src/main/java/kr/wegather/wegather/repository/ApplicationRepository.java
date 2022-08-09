@@ -24,9 +24,16 @@ public class ApplicationRepository {
     }
 
     public List<Application> findByQuestionnaire(Long questionnaireId) {
-        return em.createQuery("SELECT a FROM Application a WHERE a.questionnaire = :questionnaire", Application.class)
+        return em.createQuery("SELECT a FROM Application a WHERE a.questionnaire.id = :questionnaire", Application.class)
                 .setParameter("questionnaire", questionnaireId)
                 .getResultList();
+    }
+
+    public Application findOneByApplicantAndQuestionnaire(Long applicantId, Long questionnaireId) {
+        return em.createQuery("SELECT a FROM Application a WHERE a.applicant.id = application AND a.questionnaire.id = :questionnaire", Application.class)
+                .setParameter("applicant", applicantId)
+                .setParameter("questionnaire", questionnaireId)
+                .getSingleResult();
     }
 
     public void deleteOne(Long id) {

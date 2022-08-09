@@ -2,16 +2,17 @@ package kr.wegather.wegather.exception;
 
 import org.springframework.http.HttpStatus;
 
-public enum QuestionnaireExceptionType implements BaseExceptionType {
+public enum ApplicationExceptionType implements BaseExceptionType {
     WRONG_INPUT(400, HttpStatus.BAD_REQUEST, "잘못된 입력입니다."),
-    NOT_FOUND(404, HttpStatus.NOT_FOUND, "모집 폼이 존재하지 않습니다."),
-    ALREADY_EXIST(409, HttpStatus.CONFLICT, "해당 전형에 모집 폼이 이미 존재합니다.");
+    USER_NOT_FOUND(404, HttpStatus.NOT_FOUND, "존재하지 않는 지원서입니다."),
+    ALREADY_EXIST(409, HttpStatus.CONFLICT, "이미 지원서가 존재합니다.");
+
 
     private int errorCode;
     private HttpStatus httpStatus;
     private String errorMessage;
 
-    QuestionnaireExceptionType(int errorCode, HttpStatus http, String errorMessage) {
+    ApplicationExceptionType(int errorCode, HttpStatus http, String errorMessage) {
         this.errorCode = errorCode;
         this.httpStatus = http;
         this.errorMessage = errorMessage;

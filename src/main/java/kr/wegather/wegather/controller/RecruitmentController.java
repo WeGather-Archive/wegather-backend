@@ -30,6 +30,20 @@ public class RecruitmentController {
         return ResponseEntity.status(HttpStatus.OK).body(res.toString());
     }
 
+    @ApiOperation(value = "모집 내에 전형 생성")
+    @PostMapping("/{recruitment_id}")
+    public ResponseEntity createSelection(@PathVariable("recruitment_id") Long id) {
+        Long selectionId = selectionService.createSelection(id);
+
+        JSONObject res = new JSONObject();
+        try {
+            res.put("id", selectionId);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(res.toString());
+    }
+
     @ApiOperation(value = "모집 정보 수정")
     @PutMapping("/{recruitment_id}")
     public ResponseEntity updateRecruitment(@PathVariable("recruitment_id") Long id, @RequestBody updateRecruitmentRequest request) {
@@ -46,20 +60,6 @@ public class RecruitmentController {
     public ResponseEntity deleteRecruitment(@PathVariable("recruitment_id") Long id) {
         recruitmentService.deleteRecruitment(id);
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "모집 내에 전형 생성")
-    @PostMapping("/{recruitment_id}")
-    public ResponseEntity createSelection(@PathVariable("recruitment_id") Long id) {
-        Long selectionId = selectionService.createSelection(id);
-
-        JSONObject res = new JSONObject();
-        try {
-            res.put("id", selectionId);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(res.toString());
     }
 
 

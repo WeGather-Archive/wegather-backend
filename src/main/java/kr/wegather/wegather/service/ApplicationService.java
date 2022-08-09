@@ -1,8 +1,13 @@
 package kr.wegather.wegather.service;
 
+import kr.wegather.wegather.domain.Applicant;
 import kr.wegather.wegather.domain.Application;
+import kr.wegather.wegather.domain.Questionnaire;
+import kr.wegather.wegather.exception.ApplicationException;
+import kr.wegather.wegather.exception.ApplicationExceptionType;
 import kr.wegather.wegather.repository.ApplicationRepository;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +21,19 @@ public class ApplicationService {
     private final ApplicationRepository applicationRepository;
 
     /* Application 생성 */
-    public Long createApplication(Application application) {
+    public Long createApplication(Long applicantId, Long questionnaireId, List<String> answer) {
+        Application duplicatedApplication = applicationRepository.findOneByApplicantAndQuestionnaire(applicantId, questionnaireId);
+        if (duplicatedApplication != null)
+            throw new ApplicationException(ApplicationExceptionType.ALREADY_EXIST);
+        Applicant applicant = new Applicant();
+        applicant.setId(applicantId);
+        Questionnaire questionnaire = new Questionnaire();
+        questionnaire.setId(questionnaireId);
+
+        Application application = new Application();
+        application.setApplicant(applicant);
+        application.setQuestionnaire(questionnaire);
+        application.setAnswer(answer);
         applicationRepository.save(application);
 
         return application.getId();
@@ -36,7 +53,7 @@ public class ApplicationService {
     /* Application 수정 */
     public void updateApplication(Long id, ArrayList<String> answer) {
         Application application = applicationRepository.findOne(id);
-        application.setAnswer(answer);
+//        application.setAnswer(answer);
     }
 
     /* Application 삭제 */
