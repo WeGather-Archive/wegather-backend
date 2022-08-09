@@ -60,12 +60,7 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
-
     }
-
-
-
-
 
     @GetMapping("/club/pending")
     public ResponseEntity<String> searchClubPending(@RequestParam("uid") Long userId) {
@@ -97,9 +92,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
     }
-
-
-
     @GetMapping("/{id}")
     public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
         try {
@@ -179,7 +171,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
     }
-
     @PatchMapping("/email/{id}")
     public ResponseEntity updateEmail(@PathVariable("id") Long id, @RequestBody updateEmailRequst request) {
         try {
