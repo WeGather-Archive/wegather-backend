@@ -38,4 +38,5 @@ out/
 
 ### Environmental Variables ###
 application.yml
+application-aws.yml
 JwtTokenProvider.java

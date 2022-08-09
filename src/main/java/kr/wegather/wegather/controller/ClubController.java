@@ -220,14 +220,6 @@ public class ClubController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(res.toString());
 	}
 
-	@ApiOperation(value = "동아리 프로필 이미지 업로드")
-	@PostMapping("/image")
-	public ResponseEntity createImage() {
-//		현재 해당 사항 없음
-//		S3 올린 후 구현
-		return new ResponseEntity(HttpStatus.CREATED);
-	}
-
 	@ApiOperation(value = "이메일 발송")
 	@PostMapping("/email")
 	public ResponseEntity createEmail() {
