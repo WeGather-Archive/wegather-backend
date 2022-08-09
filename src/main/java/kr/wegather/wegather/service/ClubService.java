@@ -45,14 +45,23 @@ public class ClubService {
 		return clubRepository.findByName(clubName);
 	}
 
+	// 복수 조회 - By user
+	public List<Club> findByUserClubMember(Long userId) {
+		return clubRepository.findByUserClubMember(userId);
+	}
 
 	/* club 수정 */
+
 	public void updateClub(Long id, String phone, String name, String introduction, String avatar) {
 		Club club = clubRepository.findOne(id);
 		club.setPhone(phone);
 		club.setName(name);
 		club.setIntroduction(introduction);
 		club.setAvatar(avatar);
+	}
+
+	public List<Club> findByUserApplicant(Long userId) {
+		return clubRepository.findByUserApplicant(userId);
 	}
 
 

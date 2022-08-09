@@ -4,6 +4,8 @@ import kr.wegather.wegather.domain.*;
 import kr.wegather.wegather.domain.enums.ApplicantStatus;
 import kr.wegather.wegather.exception.ApplicantException;
 import kr.wegather.wegather.exception.ApplicantExceptionType;
+import kr.wegather.wegather.exception.SelectionException;
+import kr.wegather.wegather.exception.SelectionExceptionType;
 import kr.wegather.wegather.repository.ApplicantRepository;
 import kr.wegather.wegather.repository.ClubMemberRepository;
 import kr.wegather.wegather.repository.SelectionRepository;
@@ -50,7 +52,12 @@ public class ApplicantService {
         recruitment.setId(recruitmentId);
         User user = new User();
         user.setId(userId);
-        Selection selection = selectionRepository.findByRecruitmentAndOrder(recruitmentId, 1);
+        Selection selection;
+        try {
+            selection = selectionRepository.findByRecruitmentAndOrder(recruitmentId, 1);
+        } catch (Exception e) {
+            throw new SelectionException(SelectionExceptionType.NOT_FOUND);
+        }
 
         applicant.setRecruitment(recruitment);
         applicant.setSelection(selection);

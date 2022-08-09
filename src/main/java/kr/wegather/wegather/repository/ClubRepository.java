@@ -36,10 +36,20 @@ public class ClubRepository {
 	}
 
 	public List<Club> findByName(String name) {
-		List<Club> result =  em.createQuery("SELECT c FROM Club c WHERE c.name = :name", Club.class)
+		return em.createQuery("SELECT c FROM Club c WHERE c.name = :name", Club.class)
 				.setParameter("name", name)
 				.getResultList();
+	}
 
-		return result;
+    public List<Club> findByUserClubMember(Long userId) {
+		return em.createQuery("SELECT c FROM ClubMember cm JOIN cm.club c WHERE cm.user.id = :user", Club.class)
+				.setParameter("user", userId)
+				.getResultList();
+    }
+
+	public List<Club> findByUserApplicant(Long userId) {
+		return em.createQuery("SELECT c FROM Applicant a JOIN a.recruitment r JOIN r.clubRole cr JOIN cr.club c WHERE a.user.id = :user", Club.class)
+				.setParameter("user", userId)
+				.getResultList();
 	}
 }

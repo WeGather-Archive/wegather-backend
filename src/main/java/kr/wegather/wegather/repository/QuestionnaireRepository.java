@@ -20,9 +20,6 @@ public class QuestionnaireRepository {
         try {
             em.persist(questionnaire);
         } catch (Exception e) {
-            if (e.getClass() == PersistenceException.class) {
-                throw new QuestionnaireException(QuestionnaireExceptionType.ALREADY_EXIST);
-            }
             throw new QuestionnaireException(QuestionnaireExceptionType.WRONG_INPUT);
         }
         return questionnaire.getId();
@@ -38,18 +35,17 @@ public class QuestionnaireRepository {
                 .getResultList();
     }
 
-    public List<Questionnaire> findBySelection(Long selectionId) {
-        return em.createQuery("SELECT q FROM Questionnaire q WHERE q.selection = :selection", Questionnaire.class)
+    public Questionnaire findOneBySelection(Long selectionId) {
+        return em.createQuery("SELECT q FROM Questionnaire q WHERE q.selection.id = :selection", Questionnaire.class)
                 .setParameter("selection", selectionId)
-                .getResultList();
+                .getSingleResult();
     }
 
     public void deleteOne(Long id) {
         Questionnaire questionnaire = em.find(Questionnaire.class, id);
-        EntityTransaction transaction = em.getTransaction();
-        transaction.begin();
+        if (questionnaire == null)
+            throw new QuestionnaireException(QuestionnaireExceptionType.NOT_FOUND);
         em.remove(questionnaire);
         em.flush();
-        transaction.commit();
     }
 }
