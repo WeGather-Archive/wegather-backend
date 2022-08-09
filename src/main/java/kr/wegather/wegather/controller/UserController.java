@@ -13,12 +13,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,144 +31,195 @@ public class UserController {
     private final UserService userService;
     private final ClubService clubService;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
-        User user = userService.findOne(id);
-        if (user == null)
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-
-        JSONObject res = user.toJSONObjet();
-        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
-    }
-
     @GetMapping("/club")
     public ResponseEntity<String> searchMyClubs(@RequestParam("uid") Long userId) {
-        // userId: Parameter 말고 Token에서 가져오기
-        List<Club> clubs = clubService.findByUserClubMember(userId);
-        JSONArray clubArray = new JSONArray();
-
-        for (Club club: clubs) {
-            clubArray.put(club.toJSONObject());
-        }
-
-        JSONObject res = new JSONObject();
         try {
-            res.put("clubs", clubArray);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) authentication.getPrincipal();
+
+            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
+            if (Objects.equals(authUser.getId(), userId)) {
+                // 인증 성공일때만 로직 실행
+                List<Club> clubs = clubService.findByUserClubMember(userId);
+                JSONArray clubArray = new JSONArray();
+                for (Club club : clubs) {
+                    clubArray.put(club.toJSONObject());
+                }
+                JSONObject res = new JSONObject();
+                try {
+                    res.put("clubs", clubArray);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(res.toString());
+            }
+            // 인증 실패
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            }
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
     }
 
     @GetMapping("/club/pending")
     public ResponseEntity<String> searchClubPending(@RequestParam("uid") Long userId) {
-        // userId: Parameter 말고 Token에서 가져오기
-        List<Club> clubs = clubService.findByUserApplicant(userId);
-        JSONArray clubArray = new JSONArray();
-        for (Club club: clubs) {
-            clubArray.put(club.toJSONObject());
-        }
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) authentication.getPrincipal();
 
-        JSONObject res = new JSONObject();
-        try {
-            res.put("clubs", clubArray);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
+            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
+            if (Objects.equals(authUser.getId(), userId)) {
+                // 인증 성공일때만 로직 실행
+                List<Club> clubs = clubService.findByUserApplicant(userId);
+                JSONArray clubArray = new JSONArray();
+                for (Club club: clubs) {
+                    clubArray.put(club.toJSONObject());
+                }
+                JSONObject res = new JSONObject();
+                try {
+                    res.put("clubs", clubArray);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+                return ResponseEntity.status(HttpStatus.OK).body(res.toString());
+            }
+            // 인증 실패
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            }
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
     }
-
-    @PostMapping("/signup")
-    public ResponseEntity<User> signUp(@RequestBody signUpRequest signUpRequest) {
-        // Set User Info
-        SchoolDept schoolDept = new SchoolDept();
-        schoolDept.setId(signUpRequest.schoolDept);
-        User newUser = new User();
-        newUser.setSchoolDept(schoolDept);
-        newUser.setName(signUpRequest.name);
-        if (signUpRequest.nickName != null)
-            newUser.setNickname(signUpRequest.nickName);
-        else {
-            newUser.setNickname(signUpRequest.name);
-        }
-        newUser.setEmail(signUpRequest.email);
-        newUser.setPassword (signUpRequest.password);
-
-        userService.register(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity login(@RequestBody loginRequest request, HttpServletResponse res) {
-        // Check req
-        String email = request.email, password = request.password;
-        if (email == null || password == null)
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-
-        // 맞다면 Token 발급
-        String token;
+    @GetMapping("/{id}")
+    public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
         try {
-            token = userService.login(email, password);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) authentication.getPrincipal();
+            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
+            if (Objects.equals(authUser.getId(), id)) {
+                // 인증 성공일때만 로직 실행
+                User findUser = userService.findOne(id);
+                if (findUser == null)
+                    return new ResponseEntity(HttpStatus.NOT_FOUND);
+                JSONObject res = findUser.toJSONObjet();
+                return ResponseEntity.status(HttpStatus.OK).body(res.toString());
+            }
+            // 인증 실패
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            }
         } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
-        Cookie cookie = new Cookie(
-                "token",
-                token
-        );
-
-        cookie.setMaxAge(30 * 60 * 1000);
-
-//        res.addCookie(cookie);
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity updateUser(@PathVariable("id") Long id, @RequestBody updateUserRequest request) {
-        String nickname = request.nickname, avatar = request.avatar, profile = request.profile, phone = request.phone;
-        try {
-            userService.updateUser(id, nickname, avatar, profile, phone);
-        } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) authentication.getPrincipal();
 
-        return new ResponseEntity(HttpStatus.OK);
+            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
+            if (Objects.equals(authUser.getId(), id)) {
+                // 인증 성공일때만 로직 실행
+                String nickname = request.nickname, avatar = request.avatar, profile = request.profile, phone = request.phone;
+                try {
+                    userService.updateUser(id, nickname, avatar, profile, phone);
+                } catch (Exception e) {
+                    return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                }
+
+                return new ResponseEntity(HttpStatus.OK);
+
+            }
+            // 인증 실패
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
+        }
     }
 
     @PatchMapping("/pwd/{id}")
     public ResponseEntity updatePassword(@PathVariable("id") Long id, @RequestBody updatePasswordRequest request) {
-        String password = request.password, newPassword = request.newPassword;
-        try {
-            userService.changePassword(id, password, newPassword);
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) authentication.getPrincipal();
+
+            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
+            if (Objects.equals(authUser.getId(), id)) {
+                // 인증 성공일때만 로직 실행
+                String password = request.password, newPassword = request.newPassword;
+                try {
+                    userService.changePassword(id, password, newPassword);
+                } catch (Exception e) {
+                    return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                }
+                return new ResponseEntity(HttpStatus.OK);
+
+            }
+            // 인증 실패
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            }
+
         } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
-
-        return new ResponseEntity(HttpStatus.OK);
     }
-
     @PatchMapping("/email/{id}")
     public ResponseEntity updateEmail(@PathVariable("id") Long id, @RequestBody updateEmailRequst request) {
-        String email = request.email;
         try {
-            userService.changeEmail(id, email);
-        } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) authentication.getPrincipal();
 
-        return new ResponseEntity(HttpStatus.OK);
+            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
+            if (Objects.equals(authUser.getId(), id)) {
+                // 인증 성공일때만 로직 실행
+                String email = request.email;
+                try {
+                    userService.changeEmail(id, email);
+                } catch (Exception e) {
+                    return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                }
+                return new ResponseEntity(HttpStatus.OK);
+            }
+            // 인증 실패
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteUser(@PathVariable("id") Long id) {
-        try {
-            userService.delete(id);
-        } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            User authUser = (User) authentication.getPrincipal();
 
-        return new ResponseEntity(HttpStatus.OK);
+            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
+            if (Objects.equals(authUser.getId(), id)) {
+                // 인증 성공일때만 로직 실행
+                try {
+                    userService.delete(id);
+                } catch (Exception e) {
+                    return new ResponseEntity(HttpStatus.BAD_REQUEST);
+                }
+                return new ResponseEntity(HttpStatus.OK);
+            }
+            // 인증 실패
+            else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
+        }
     }
 
     @Data
