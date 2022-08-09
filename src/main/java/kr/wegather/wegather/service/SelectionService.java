@@ -23,7 +23,7 @@ public class SelectionService {
     private final ApplicantRepository applicantRepository;
 
     /* Selection 생성 */
-    public Long createSelection(Long recruitmentId) {
+    public Long createSelection(Long recruitmentId, Timestamp endTime) {
         Selection selection = new Selection();
         Recruitment recruitment = new Recruitment();
         recruitment.setId(recruitmentId);
@@ -32,6 +32,7 @@ public class SelectionService {
 
         selection.setRecruitment(recruitment);
         selection.setOrder(order);
+        selection.setEndTime(endTime);
 
         selectionRepository.save(selection);
 

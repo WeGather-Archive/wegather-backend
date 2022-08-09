@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class ClubController {
 	private final ClubSchoolService clubSchoolService;
 	private final QuestionnaireService questionnaireService;
 	private final RecruitmentService recruitmentService;
+	private final SelectionService selectionService;
 
 	@ApiOperation(value = "동아리 전체 목록 조회")
 	@GetMapping("")
@@ -279,7 +281,9 @@ public class ClubController {
 	@PostMapping("/recruitment/{club_role_id}")
 	public ResponseEntity createRecruitment(@PathVariable("club_role_id") Long id, @RequestBody createRecruitmentRequest request) {
 		String title = request.title, description = request.description;
+		Timestamp endTime = request.endTime;
 		Long recruitmentId = recruitmentService.createRecruitment(id, title, description);
+		Long selectionId = selectionService.createSelection(recruitmentId, endTime);
 
 		JSONObject res = new JSONObject();
 		try {
@@ -332,5 +336,6 @@ public class ClubController {
 	static class createRecruitmentRequest {
 		private String title;
 		private String description;
+		private Timestamp endTime;
 	}
 }

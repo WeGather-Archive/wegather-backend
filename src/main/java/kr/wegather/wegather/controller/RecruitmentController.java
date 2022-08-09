@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/recruitment")
@@ -33,7 +35,7 @@ public class RecruitmentController {
     @ApiOperation(value = "모집 내에 전형 생성")
     @PostMapping("/{recruitment_id}")
     public ResponseEntity createSelection(@PathVariable("recruitment_id") Long id) {
-        Long selectionId = selectionService.createSelection(id);
+        Long selectionId = selectionService.createSelection(id, new Timestamp(System.currentTimeMillis()));
 
         JSONObject res = new JSONObject();
         try {

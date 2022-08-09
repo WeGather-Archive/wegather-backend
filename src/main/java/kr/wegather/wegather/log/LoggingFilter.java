@@ -35,11 +35,15 @@ public class LoggingFilter extends OncePerRequestFilter {
     }
 
     protected void doFilterWrapped(RequestWrapper request, ContentCachingResponseWrapper response, FilterChain filterChain) throws ServletException, IOException {
+        Boolean isSwagger = false;
         try {
             logRequest(request);
             filterChain.doFilter(request, response);
+            if (request.getRequestURI().contains("swagger") || request.getRequestURI().contains("v3"))
+                isSwagger = true;
         } finally {
-            logResponse(response);
+            if (!isSwagger)
+                logResponse(response);
             response.copyBodyToResponse();
         }
     }
