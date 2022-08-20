@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpSession;
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,13 +53,19 @@ public class AuthController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
 	}
 
+	@GetMapping("/auth/user")
+	public ResponseEntity<String> getAuthUser(Principal principal){
+		System.out.println(principal.getName());
+		return ResponseEntity.status(HttpStatus.OK).body(principal.getName());
+	}
+
 	// login 성공 시, 클라이언트에 현재 user 의 id 값 리턴
 	@ApiIgnore
 	@GetMapping("/login/success")
 	public ResponseEntity<Long> loginSuccess(){
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		User user = (User) authentication.getPrincipal();
-
+		User user = (User)authentication.getPrincipal();
+		System.out.println(user.getId());
 		return ResponseEntity.status(HttpStatus.OK).body(user.getId());
 	}
 
