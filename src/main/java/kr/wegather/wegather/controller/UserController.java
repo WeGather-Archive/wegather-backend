@@ -94,6 +94,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
         }
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<String> searchUser(@PathVariable("id") Long id) {
         try {
