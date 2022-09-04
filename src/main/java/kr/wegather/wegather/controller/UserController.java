@@ -1,6 +1,7 @@
 package kr.wegather.wegather.controller;
 
 import io.swagger.annotations.ApiModelProperty;
+import kr.wegather.wegather.auth.PrincipalDetails;
 import kr.wegather.wegather.domain.Club;
 import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
@@ -34,9 +35,11 @@ public class UserController {
     private final ClubService clubService;
 
     @GetMapping("/club")
-    public ResponseEntity<String> searchMyClubs(@RequestParam("uid") Long userId) {
+    public ResponseEntity<String> searchMyClubs() {
         try {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+            Long userId = principalDetails.getUser().getId();
 //            User authUser = (User) authentication.getPrincipal();
 
             // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
