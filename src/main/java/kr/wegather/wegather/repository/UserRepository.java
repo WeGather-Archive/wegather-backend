@@ -3,8 +3,10 @@ package kr.wegather.wegather.repository;
 import kr.wegather.wegather.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,5 +32,18 @@ public class UserRepository {
                 .setParameter("email", email)
                 .setParameter("isDeleted", false)
                 .getSingleResult();
+    }
+
+    public User findOneByName(String name) {
+        try {
+            return em.createQuery("SELECT u FROM User u WHERE u.name = :name AND u.isDeleted = :isDeleted", User.class)
+                .setParameter("name", name)
+                .setParameter("isDeleted", false)
+                .getSingleResult();
+        } catch (NoResultException nre){
+            return null;
+        }
+
+
     }
 }

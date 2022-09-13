@@ -2,6 +2,7 @@ package kr.wegather.wegather.config;
 
 import kr.wegather.wegather.auth.JwtAuthenticationFilter;
 import kr.wegather.wegather.auth.JwtAuthorizationFilter;
+import kr.wegather.wegather.auth.PrincipalOauth2UserService;
 import kr.wegather.wegather.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CorsConfig corsConfig;
 
+	@Autowired
+	private PrincipalOauth2UserService principalOauth2UserService;
+
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
@@ -43,7 +47,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 				.antMatchers("/login/**")
 				.access("hasRole('GUEST') or hasRole('USER') or hasRole ('ADMIN')")
-				.anyRequest().permitAll();
+				.anyRequest().permitAll()
+				.and()
+				.oauth2Login()
+				.userInfoEndpoint()
+				.userService(principalOauth2UserService);
 	}
 }
 

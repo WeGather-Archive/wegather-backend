@@ -3,7 +3,6 @@ package kr.wegather.wegather.controller;
 import io.swagger.annotations.ApiModelProperty;
 import kr.wegather.wegather.auth.PrincipalDetails;
 import kr.wegather.wegather.domain.Club;
-import kr.wegather.wegather.domain.SchoolDept;
 import kr.wegather.wegather.domain.User;
 import kr.wegather.wegather.service.ClubService;
 import kr.wegather.wegather.service.UserService;
@@ -20,8 +19,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Objects;
 
@@ -178,7 +175,7 @@ public class UserController {
         }
     }
     @PatchMapping("/email/{id}")
-    public ResponseEntity updateEmail(@PathVariable("id") Long id, @RequestBody updateEmailRequst request) {
+    public ResponseEntity updateEmail(@PathVariable("id") Long id, @RequestBody updateEmailRequest request) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User authUser = (User) authentication.getPrincipal();
@@ -273,7 +270,7 @@ public class UserController {
     }
 
     @Data
-    static class updateEmailRequst {
+    static class updateEmailRequest {
         private String email;
     }
 }

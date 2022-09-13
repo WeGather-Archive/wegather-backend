@@ -3,6 +3,8 @@ package kr.wegather.wegather.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import kr.wegather.wegather.domain.enums.AuthLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
@@ -84,6 +86,16 @@ public class User {
     @Column(name = "is_verified")
     private Boolean isVerified;
 
+    private String provider; // oauth2 플랫폼
+
+    @Column(name = "provider_id")
+    private String providerId; // oauth2 아이디값
+
+    public User() {
+
+    }
+
+
     public JSONObject toJSONObjet() {
         JSONObject json = new JSONObject();
         try {
@@ -124,5 +136,16 @@ public class User {
             throw new RuntimeException(e);
         }
         return json;
+    }
+
+
+    @Builder(builderClassName = "OAuth2Register", builderMethodName = "oauth2Register")
+    public User(String name, String password, String email, AuthLevel authLevel, String provider, String providerId) {
+        this.name = name;
+        this.password = password;
+        this.email = email;
+        this.authLevel = authLevel;
+        this.provider = provider;
+        this.providerId = providerId;
     }
 }
