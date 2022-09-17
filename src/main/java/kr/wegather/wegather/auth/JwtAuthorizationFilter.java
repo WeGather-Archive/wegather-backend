@@ -1,8 +1,7 @@
 package kr.wegather.wegather.auth;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.DefaultClaims;
 import kr.wegather.wegather.domain.User;
 import kr.wegather.wegather.repository.UserRepository;
 import org.slf4j.Logger;
@@ -25,6 +24,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private UserRepository userRepository;
 
+    @Value("${secret-key.jwt}")
     private String secretKey = JwtProperties.secretKey;
 
     public JwtAuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
@@ -46,7 +46,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             claims = parseJwtToken(header);
         } catch (SignatureException e) {
-            System.out.println(e);
+//            System.out.println(e);
             chain.doFilter(request, response);
             return;
         }
@@ -72,11 +72,18 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private Claims parseJwtToken(String authorizationHeader) throws SignatureException {
         String token = extractToken(authorizationHeader);
-
-        return Jwts.parser()
+        Claims c = new DefaultClaims();
+        try {
+            c = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
+        } catch (ExpiredJwtException e) {
+            return c;
+        } catch (MalformedJwtException e) {
+            return c;
+        }
+        return c;
     }
 
     private Boolean validateAuthorizationHeader(String header) {

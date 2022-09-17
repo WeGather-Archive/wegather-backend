@@ -1,7 +1,9 @@
 package kr.wegather.wegather.repository;
 
+import kr.wegather.wegather.controller.ClubController;
 import kr.wegather.wegather.domain.Club;
 import kr.wegather.wegather.domain.ClubMember;
+import kr.wegather.wegather.service.ClubService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -34,6 +36,17 @@ public class ClubRepository {
 		return em.createQuery("SELECT c FROM Club c", Club.class)
 				.getResultList();
 	}
+
+//    public List<Club> findAllWithFilter(Long userId, Boolean isMySchool, String query) {
+//		if (isMySchool) {
+//			return em.createQuery("SELECT c, COUNT(cm) AS member FROM Club c JOIN WHERE c.name LIKE \"%:query%\"", Club.class)
+//					.setParameter("query", query)
+//					.getResultList();
+//		} else {
+//			return em.createQuery("SELECT c FROM Club c", Club.class)
+//					.getResultList();
+//		}
+//    }
 
 	public List<Club> findByName(String name) {
 		return em.createQuery("SELECT c FROM Club c WHERE c.name = :name", Club.class)
