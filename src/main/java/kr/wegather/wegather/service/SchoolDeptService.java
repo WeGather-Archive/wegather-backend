@@ -16,7 +16,7 @@ public class SchoolDeptService {
 
     /* SchoolDept 조회 */
     // 복수 조회 - By School
-    public List<SchoolDept> findBySchoolAndName(Long schoolId, String name) {
-        return schoolDeptRepository.findBySchoolAndName(schoolId, name);
+    public List<SchoolDept> findBySchool(Long schoolId) {
+        return schoolDeptRepository.findBySchool(schoolId);
     }
 }

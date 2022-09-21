@@ -44,10 +44,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
-			.authorizeRequests()
-				.antMatchers("/login/**")
-				.access("hasRole('GUEST') or hasRole('USER') or hasRole ('ADMIN')")
-				.anyRequest().permitAll()
+				.authorizeRequests()
+				.antMatchers("/login", "/user/signup", "/school/**","/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
+				.anyRequest().authenticated()
 				.and()
 				.oauth2Login()
 				.userInfoEndpoint()

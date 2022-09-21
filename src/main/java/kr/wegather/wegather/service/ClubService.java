@@ -1,7 +1,9 @@
 package kr.wegather.wegather.service;
 
+import kr.wegather.wegather.controller.ClubController;
 import kr.wegather.wegather.domain.Club;
 import kr.wegather.wegather.repository.ClubRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,10 @@ public class ClubService {
 		return clubRepository.findByName(clubName);
 	}
 
+//	public List<Club> findAllWithFilter(Long userId, Boolean isMySchool, String query) {
+//		return clubRepository.findAllWithFilter(userId, isMySchool, query);
+//	}
+
 	// 복수 조회 - By user
 	public List<Club> findByUserClubMember(Long userId) {
 		return clubRepository.findByUserClubMember(userId);
@@ -65,5 +71,7 @@ public class ClubService {
 	}
 
 
+
 	/* club 삭제 */
+
 }

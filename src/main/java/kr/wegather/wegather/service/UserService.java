@@ -24,33 +24,22 @@ public class UserService {
         return userRepository.findOne(id);
     }
 
-    /* 로그인 */
-    public User login(String email, String password) {
-        // 유저 검색
-        User user = userRepository.findOneByEmail(email);
-        if (user == null)
-            throw new UserException(UserExceptionType.USER_NOT_FOUND);
+    /* User 생성 */
+    // 회원가입
+    public Long signUp(User user) {
+        String email = user.getEmail();
+        validateDuplicateUser(email); // 중복 회원 검증
 
-        BCryptPasswordEncoder Bcrypt = new BCryptPasswordEncoder();
-        if (!Bcrypt.matches(password, user.getPassword()))
-            throw new UserException(UserExceptionType.WRONG_INPUT);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // token 발급
-//        JSONObject token = new JSONObject();
-//        try {
-//            token.put("id", user.getId());
-//            token.put("nickname", user.getNickname());
-//            token.put("name", user.getName());
-//            token.put("avatar", user.getAvatar());
-//        } catch (JSONException e) {
-//            throw new RuntimeException(e);
-//        }
-        return user;
+        userRepository.save(user);
+
+        return user.getId();
     }
 
     /* User 수정 */
     // Minor Info 수정
-
     public void updateUser(Long id, String nickname, String avatar, String profile, String phone) {
         User user;
         try {

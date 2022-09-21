@@ -1,6 +1,7 @@
 package kr.wegather.wegather.controller;
 
 import io.swagger.annotations.ApiOperation;
+import kr.wegather.wegather.auth.PrincipalDetails;
 import kr.wegather.wegather.domain.*;
 import kr.wegather.wegather.domain.enums.ClubRoleAuthLevel;
 import kr.wegather.wegather.domain.enums.ClubRoleIsDefault;
@@ -13,6 +14,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
@@ -34,7 +37,11 @@ public class ClubController {
 
 	@ApiOperation(value = "동아리 전체 목록 조회")
 	@GetMapping("")
-	public ResponseEntity<String> searchClubs() {
+	public ResponseEntity<String> searchClubs(@RequestParam("isMySchool") Boolean isMySchool, @RequestParam("query") String query) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+		Long userId = principalDetails.getUser().getId();
+
 		List<Club> clubs = clubService.findAll();
 		JSONArray clubArray = new JSONArray();
 		for (Club club: clubs) {
@@ -304,6 +311,11 @@ public class ClubController {
 	}
 
 	@Data
+	public static class searchClubsFilter {
+		private Boolean isMySchool;
+		private String query;
+	}
+	@Data
 	static class createClubRequest {
 
 		private String name;
@@ -338,4 +350,5 @@ public class ClubController {
 		private String description;
 		private Timestamp endTime;
 	}
+
 }

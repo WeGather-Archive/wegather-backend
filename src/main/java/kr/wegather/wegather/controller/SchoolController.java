@@ -50,9 +50,9 @@ public class SchoolController {
 
     @ApiOperation(value = "학과 목록 조회")
     @GetMapping("/{school_id}")
-    public ResponseEntity<String> searchSchoolDepts(@PathVariable("school_id") Long id, @RequestParam String name) {
+    public ResponseEntity<String> searchSchoolDepts(@PathVariable("school_id") Long id) {
         // 학과 목록 받아오기
-        List<SchoolDept> schoolDepts = schoolDeptService.findBySchoolAndName(id, name);
+        List<SchoolDept> schoolDepts = schoolDeptService.findBySchool(id);
 
         // JSON으로 변환
         JSONArray array = new JSONArray();
@@ -63,7 +63,7 @@ public class SchoolController {
         // 응답 객체 생성
         JSONObject res = new JSONObject();
         try {
-            res.put("schools", array);
+            res.put("schoolDepts", array);
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
