@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
 			.authorizeRequests()
-				.antMatchers("/login", "/user/signup", "/school/**").permitAll()
+				.antMatchers("/login", "/user/signup", "/school/**", "/swagger-ui/**").permitAll()
 				.anyRequest().authenticated();
 	}
 }

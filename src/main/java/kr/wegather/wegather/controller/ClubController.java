@@ -1,5 +1,7 @@
 package kr.wegather.wegather.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import kr.wegather.wegather.auth.PrincipalDetails;
 import kr.wegather.wegather.domain.*;
@@ -42,8 +44,9 @@ public class ClubController {
 		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 		Long userId = principalDetails.getUser().getId();
 
-		List<Club> clubs = clubService.findAll();
+		List<Club> clubs = clubService.findAllWithFilter(userId, isMySchool, query);
 		JSONArray clubArray = new JSONArray();
+		ObjectMapper om = new ObjectMapper();
 		for (Club club: clubs) {
 			clubArray.put(club.toJSONObject());
 		}

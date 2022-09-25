@@ -47,9 +47,9 @@ public class ClubService {
 		return clubRepository.findByName(clubName);
 	}
 
-//	public List<Club> findAllWithFilter(Long userId, Boolean isMySchool, String query) {
-//		return clubRepository.findAllWithFilter(userId, isMySchool, query);
-//	}
+	public List<Club> findAllWithFilter(Long userId, Boolean isMySchool, String query) {
+		return clubRepository.findAllWithFilter(userId, isMySchool, query);
+	}
 
 	// 복수 조회 - By user
 	public List<Club> findByUserClubMember(Long userId) {

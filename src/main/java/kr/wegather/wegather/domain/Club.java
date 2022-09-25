@@ -74,6 +74,7 @@ public class Club {
             json.put("avatar", avatar);
             json.put("introduction", introduction);
             json.put("type", type);
+            json.put("members", clubMembers.size());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

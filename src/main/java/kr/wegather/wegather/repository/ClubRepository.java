@@ -37,16 +37,28 @@ public class ClubRepository {
 				.getResultList();
 	}
 
-//    public List<Club> findAllWithFilter(Long userId, Boolean isMySchool, String query) {
-//		if (isMySchool) {
-//			return em.createQuery("SELECT c, COUNT(cm) AS member FROM Club c JOIN WHERE c.name LIKE \"%:query%\"", Club.class)
-//					.setParameter("query", query)
-//					.getResultList();
-//		} else {
-//			return em.createQuery("SELECT c FROM Club c", Club.class)
-//					.getResultList();
-//		}
-//    }
+    public List<Club> findAllWithFilter(Long userId, Boolean isMySchool, String query) {
+		if (isMySchool) {
+			return em.createQuery("SELECT c FROM User u" +
+							" JOIN SchoolDept sd ON u.schoolDept.id = sd.id" +
+							" JOIN ClubSchool cs ON sd.school.id = cs.school.id" +
+							" JOIN Club c ON cs.club.id = c.id" +
+							" JOIN FETCH ClubMember cm ON c.id = cm.club.id" +
+							" WHERE u.id = :userId" +
+							" AND c.name LIKE CONCAT('%', :query, '%')"
+							, Club.class)
+					.setParameter("userId", userId)
+					.setParameter("query", query)
+					.getResultList();
+		} else {
+			return em.createQuery("SELECT c FROM Club c" +
+							" JOIN FETCH ClubMember cm ON c.id = cm.club.id" +
+							" WHERE c.name LIKE CONCAT('%', :query, '%')"
+							, Club.class)
+					.setParameter("query", query)
+					.getResultList();
+		}
+    }
 
 	public List<Club> findByName(String name) {
 		return em.createQuery("SELECT c FROM Club c WHERE c.name = :name", Club.class)
