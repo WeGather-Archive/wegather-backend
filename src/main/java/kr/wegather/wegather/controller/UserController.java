@@ -54,34 +54,23 @@ public class UserController {
     }
 
     @GetMapping("/club/pending")
-    public ResponseEntity<String> searchClubPending(@RequestParam("uid") Long userId) {
-        try{
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            User authUser = (User) authentication.getPrincipal();
+    public ResponseEntity<String> searchClubPending() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+        Long userId = principalDetails.getUser().getId();
 
-            // get 으로 넘어온 id 값과 유저인증정보(세션) 의 id 를 비교
-//            if (Objects.equals(authUser.getId(), userId)) {
-                // 인증 성공일때만 로직 실행
-                List<Club> clubs = clubService.findByUserApplicant(userId);
-                JSONArray clubArray = new JSONArray();
-                for (Club club: clubs) {
-                    clubArray.put(club.toJSONObject());
-                }
-                JSONObject res = new JSONObject();
-                try {
-                    res.put("clubs", clubArray);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                return ResponseEntity.status(HttpStatus.OK).body(res.toString());
-//            }
-            // 인증 실패
-//            else {
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
-//            }
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("로그인이 필요합니다");
+        List<Club> clubs = clubService.findByUserApplicant(userId);
+        JSONArray clubArray = new JSONArray();
+        for (Club club: clubs) {
+            clubArray.put(club.toJSONObject());
         }
+        JSONObject res = new JSONObject();
+        try {
+            res.put("clubs", clubArray);
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(res.toString());
     }
 
     @GetMapping("/{id}")

@@ -171,9 +171,12 @@ public class ClubController {
 
 	@ApiOperation(value = "동아리 등록")
 	@PostMapping("/")
-	public ResponseEntity<String> createClub(@RequestParam("uid") Long userId, @RequestBody createClubRequest request){
+	public ResponseEntity<String> createClub(@RequestBody createClubRequest request){
 		// 유저 데이터
 //		Long userId = 1L; // Token에서 가져오기
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
+		Long userId = principalDetails.getUser().getId();
 		User user = userService.findOne(userId);
 
 		// 앞으로 쓸 더미 데이터 생성
