@@ -21,6 +21,8 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 @Getter @Setter
+@Builder
+@AllArgsConstructor
 public class User {
 
     // Primary Key
@@ -94,7 +96,6 @@ public class User {
     public User() {
 
     }
-
 
     public JSONObject toJSONObjet() {
         JSONObject json = new JSONObject();

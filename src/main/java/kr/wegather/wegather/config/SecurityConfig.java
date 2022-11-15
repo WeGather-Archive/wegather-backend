@@ -2,7 +2,6 @@ package kr.wegather.wegather.config;
 
 import kr.wegather.wegather.auth.JwtAuthenticationFilter;
 import kr.wegather.wegather.auth.JwtAuthorizationFilter;
-import kr.wegather.wegather.auth.PrincipalOauth2UserService;
 import kr.wegather.wegather.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -24,11 +22,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private CorsConfig corsConfig;
 
-	@Autowired
-	private PrincipalOauth2UserService principalOauth2UserService;
-
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
@@ -45,12 +40,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
 				.authorizeRequests()
-				.antMatchers("/login", "/user/signup", "/school/**","/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
-				.anyRequest().authenticated()
-				.and()
-				.oauth2Login()
-				.userInfoEndpoint()
-				.userService(principalOauth2UserService);
+				.antMatchers("/login/**")
+				.access("hasRole('GUEST') or hasRole('USER') or hasRole ('ADMIN')")
+				.anyRequest().permitAll();
 	}
 }
 
