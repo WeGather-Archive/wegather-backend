@@ -20,8 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Objects;
 
@@ -174,7 +172,7 @@ public class UserController {
         }
     }
     @PatchMapping("/email/{id}")
-    public ResponseEntity updateEmail(@PathVariable("id") Long id, @RequestBody updateEmailRequst request) {
+    public ResponseEntity updateEmail(@PathVariable("id") Long id, @RequestBody updateEmailRequest request) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             User authUser = (User) authentication.getPrincipal();
@@ -256,7 +254,7 @@ public class UserController {
     }
 
     @Data
-    static class updateEmailRequst {
+    static class updateEmailRequest {
         private String email;
     }
 }

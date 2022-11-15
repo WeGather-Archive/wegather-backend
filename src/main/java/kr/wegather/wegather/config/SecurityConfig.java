@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
@@ -24,7 +23,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private CorsConfig corsConfig;
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
+	public BCryptPasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
@@ -40,9 +39,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 				.addFilter(new JwtAuthenticationFilter(authenticationManager()))
 				.addFilter(new JwtAuthorizationFilter(authenticationManager(), userRepository))
+//<<<<<<< HEAD
 			.authorizeRequests()
 				.antMatchers("/login", "/user/signup", "/school/**","/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll()
 				.anyRequest().authenticated();
+//=======
+//				.authorizeRequests()
+//				.antMatchers("/login/**")
+//				.access("hasRole('GUEST') or hasRole('USER') or hasRole ('ADMIN')")
+//				.anyRequest().permitAll();
+//>>>>>>> 78ecc5b0cff6e819b4f66129e358c2b148147798
 	}
 }
 
