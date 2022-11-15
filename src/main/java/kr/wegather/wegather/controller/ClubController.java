@@ -8,6 +8,7 @@ import kr.wegather.wegather.domain.*;
 import kr.wegather.wegather.domain.enums.ClubRoleAuthLevel;
 import kr.wegather.wegather.domain.enums.ClubRoleIsDefault;
 import kr.wegather.wegather.domain.enums.QuestionnaireStatus;
+import kr.wegather.wegather.function.Security;
 import kr.wegather.wegather.service.*;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +19,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/club")
 public class ClubController {
@@ -37,44 +45,18 @@ public class ClubController {
 	private final RecruitmentService recruitmentService;
 	private final SelectionService selectionService;
 
-	@ApiOperation(value = "동아리 전체 목록 조회")
-	@GetMapping("")
-	public ResponseEntity<String> searchClubs(@RequestParam("isMySchool") Boolean isMySchool, @RequestParam("query") String query) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-		Long userId = principalDetails.getUser().getId();
-
-		List<Club> clubs = clubService.findAllWithFilter(userId, isMySchool, query);
-		JSONArray clubArray = new JSONArray();
-		ObjectMapper om = new ObjectMapper();
-		for (Club club: clubs) {
-			clubArray.put(club.toJSONObject());
-		}
-//		현재 해당사항 없음
-//		필터 구체화 후 구현
-
-		JSONObject res = new JSONObject();
-		try {
-			res.put("clubs", clubArray);
-		} catch (JSONException e) {
-			throw new RuntimeException(e);
-		}
-		return ResponseEntity.status(HttpStatus.OK).body(res.toString());
-	}
-
 	@ApiOperation(value = "동아리 상세 정보 조회")
-	@GetMapping("/")
-	public ResponseEntity<String> searchClub(@RequestParam Long id) {
+	@GetMapping("/{club_id}/")
+	public ResponseEntity<String> searchClub(@PathVariable("club_id") String id) {
 		// Club 객체 조회
-//		Long clubId = Long.parseLong(id);
-		Long clubId = id;
+		Long clubId = Long.parseLong(Security.decrypt(id));
 		Club club;
 		try {
 			club = clubService.findOneWithUser(clubId);
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		JSONObject res = club.toJSONObject();
+		JSONObject res = new JSONObject();
 
 		// ClubSchool 객체 조회
 		List<ClubSchool> clubSchools = clubSchoolService.findByClub(clubId);
@@ -84,7 +66,8 @@ public class ClubController {
 		}
 
 		try {
-			res.put("school", clubSchoolsJSON);
+			res.put("club", club.toJSONObject());
+			res.put("schools", clubSchoolsJSON);
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
@@ -93,10 +76,11 @@ public class ClubController {
 	}
 
 	@ApiOperation(value = "동아리 역할 목록 조회")
-	@GetMapping("/role")
-	public ResponseEntity<String> searchClubRoles(@RequestParam Long id) {
+	@GetMapping("/{club_id}/role/")
+	public ResponseEntity<String> searchClubRoles(@PathVariable("club_id") String id) {
 		// 동아리 역할 조회
-		List<ClubRole> clubRoles = clubRoleService.findByClub(id);
+		Long clubId = Long.parseLong(Security.decrypt(id));
+		List<ClubRole> clubRoles = clubRoleService.findByClub(clubId);
 
 		// 응답 객체 생성
 		JSONArray clubRoleArray = new JSONArray();
@@ -113,10 +97,11 @@ public class ClubController {
 	}
 
 	@ApiOperation(value = "구성원 전체 목록 조회")
-	@GetMapping("/member")
-	public ResponseEntity<String> searchClubMembers(@RequestParam Long id) {
+	@GetMapping("/{club_id}/member/")
+	public ResponseEntity<String> searchClubMembers(@PathVariable("club_id") String id) {
 		// 구성원 조회
-		List<ClubMember> clubMembers = clubMemberService.findByClub(id);
+		Long clubId = Long.parseLong(Security.decrypt(id));
+		List<ClubMember> clubMembers = clubMemberService.findByClub(clubId);
 
 		// 응답 객체 생성
 		JSONObject res = new JSONObject();
@@ -133,7 +118,7 @@ public class ClubController {
 	}
 
 	@ApiOperation(value = "모집 폼 목록 조회")
-	@GetMapping("/form")
+	@GetMapping("/{club_id}/form/")
 	public ResponseEntity<String> searchQuestionnaires(@RequestParam Long id) {
 		List<Questionnaire> questionnaires = questionnaireService.findByClub(id);
 		JSONArray questionnaireArray = new JSONArray();
@@ -151,9 +136,9 @@ public class ClubController {
 	}
 
 	@ApiOperation(value = "동아리 내 전체 모집 목록 조회 API")
-	@GetMapping("/recruitment")
-	public ResponseEntity<String> searchRecruitments(@RequestParam("id") Long clubId) {
-
+	@GetMapping("/{club_id}/recruitment/")
+	public ResponseEntity<String> searchRecruitments(@PathVariable("club_id") String id) {
+		Long clubId = Long.parseLong(Security.decrypt(id));
 		List<Recruitment> recruitments = recruitmentService.findByClub(clubId);
 		JSONArray recruitmentArray = new JSONArray();
 		for (Recruitment recruitment: recruitments) {
@@ -173,7 +158,6 @@ public class ClubController {
 	@PostMapping("/")
 	public ResponseEntity<String> createClub(@RequestBody createClubRequest request){
 		// 유저 데이터
-//		Long userId = 1L; // Token에서 가져오기
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
 		Long userId = principalDetails.getUser().getId();
@@ -228,7 +212,7 @@ public class ClubController {
 		// 응답 객체 생성
 		JSONObject res = new JSONObject();
 		try {
-			res.put("club_id", clubId);
+			res.put("club_id", Security.encrypt(clubId.toString()));
 		} catch (JSONException e) {
 			throw new RuntimeException(e);
 		}
@@ -244,7 +228,7 @@ public class ClubController {
 	}
 
 	@ApiOperation(value = "동아리 역할 생성")
-	@PostMapping("/role/{club_id}")
+	@PostMapping("/role/")
 	public ResponseEntity createClubRole(@PathVariable("club_id") Long id, @RequestBody createClubRoleRequest request) {
 		// 동아리 역할 생성
 		Club club = new Club();
@@ -308,7 +292,7 @@ public class ClubController {
 	}
 
 	@ApiOperation(value = "동아리 상세 정보 수정")
-	@PutMapping("/{club_id}")
+	@PutMapping("/")
 	public ResponseEntity updateClub(@PathVariable("club_id") Long id, @RequestBody updateClubRequest request) {
 		// 수정할 fields
 		String phone = request.phone, name = request.name, introduction = request.introduction, avatar = request.avatar;

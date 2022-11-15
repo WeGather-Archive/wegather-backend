@@ -2,6 +2,7 @@ package kr.wegather.wegather.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.wegather.wegather.domain.enums.ClubType;
+import kr.wegather.wegather.function.Security;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
@@ -67,7 +68,8 @@ public class Club {
     public JSONObject toJSONObject() {
         JSONObject json = new JSONObject();
         try {
-            json.put("id", id);
+            String encryptedId = Security.encrypt(id.toString());
+            json.put("id", encryptedId);
             json.put("admin", admin.toJSONObjectForClub());
             json.put("phone", phone);
             json.put("name", name);
