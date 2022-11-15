@@ -3,6 +3,8 @@ package kr.wegather.wegather.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import kr.wegather.wegather.domain.enums.AuthLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicInsert;
@@ -19,6 +21,8 @@ import java.util.List;
 @DynamicInsert
 @DynamicUpdate
 @Getter @Setter
+@Builder
+@AllArgsConstructor
 public class User {
 
     // Primary Key
@@ -83,6 +87,15 @@ public class User {
 
     @Column(name = "is_verified")
     private Boolean isVerified;
+
+    private String provider; // oauth2 플랫폼
+
+    @Column(name = "provider_id")
+    private String providerId; // oauth2 아이디값
+
+    public User() {
+
+    }
 
     public JSONObject toJSONObjet() {
         JSONObject json = new JSONObject();
