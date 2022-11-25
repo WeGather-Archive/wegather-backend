@@ -62,9 +62,9 @@ public class ApplicantService {
         applicant.setRecruitment(recruitment);
         applicant.setSelection(selection);
         applicant.setUser(user);
-        applicantRepository.save(applicant);
+        Long applicantId = applicantRepository.save(applicant);
 
-        return applicant.getId();
+        return applicantId;
     }
 
     /* Applicant 조회 */

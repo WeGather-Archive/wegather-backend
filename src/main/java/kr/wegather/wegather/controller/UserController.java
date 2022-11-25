@@ -102,17 +102,17 @@ public class UserController {
         User newUser = new User();
         newUser.setSchoolDept(schoolDept);
         newUser.setName(request.name);
-        if (request.nickName != null)
+        if (request.nickName != "")
             newUser.setNickname(request.nickName);
         else {
             newUser.setNickname(request.name);
         }
         newUser.setEmail(request.email);
-        newUser.setPassword (request.password);
+        newUser.setPassword(request.password);
 
         userService.signUp(newUser);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

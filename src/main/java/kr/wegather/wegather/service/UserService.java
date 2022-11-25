@@ -5,14 +5,16 @@ import kr.wegather.wegather.exception.UserException;
 import kr.wegather.wegather.exception.UserExceptionType;
 import kr.wegather.wegather.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.DynamicInsert;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@DynamicInsert
 @RequiredArgsConstructor
 public class UserService {
 
@@ -33,9 +35,9 @@ public class UserService {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        userRepository.save(user);
+        Long userId = userRepository.save(user);
 
-        return user.getId();
+        return userId;
     }
 
     /* User 수정 */

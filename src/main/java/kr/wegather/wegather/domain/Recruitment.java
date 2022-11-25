@@ -62,6 +62,7 @@ public class Recruitment {
             json.put("description", description);
             json.put("created", created);
             json.put("status", status);
+            json.put("applicant_num", applicants.size());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
